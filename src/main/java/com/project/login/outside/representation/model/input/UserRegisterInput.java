@@ -28,7 +28,7 @@ public class UserRegisterInput {
     @NotBlank
     private String password;
 
-    @NotBlank
+    @NotNull
     private Gender gender;
 
     @NotNull
