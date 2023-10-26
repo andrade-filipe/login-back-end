@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 public class UserRegisterMapper {
@@ -19,5 +21,11 @@ public class UserRegisterMapper {
 
     public UserRegisterResponse toResponse(User user){
         return modelMapper.map(user, UserRegisterResponse.class);
+    }
+
+    public List<UserRegisterResponse> toCollectionModel(List<User> users){
+        return users.stream()
+                .map(this::toResponse)
+                .toList();
     }
 }

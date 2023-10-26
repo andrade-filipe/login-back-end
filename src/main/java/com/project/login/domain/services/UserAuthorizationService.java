@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class UserService implements UserDetailsService {
+public class UserAuthorizationService implements UserDetailsService {
 
     private final String USER_NOT_FOUND_MSG = "user with email %s not found";
     private final UserRepository userRepository;

@@ -1,13 +1,11 @@
 package com.project.login.domain.entitys.user;
 
-import com.project.login.domain.entitys.enums.UserRole;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.List;
-
+import java.util.Collections;
 public class UserDetail implements UserDetails {
 
     private final User user;
@@ -18,11 +16,9 @@ public class UserDetail implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if(user.getUserRole() == UserRole.ADMIN) {
-            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"),
-                    new SimpleGrantedAuthority("ROLE_USER"));
-        }
-        else return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        SimpleGrantedAuthority authority =
+                new SimpleGrantedAuthority(user.getUserRole().name());
+        return Collections.singletonList(authority);
     }
 
     @Override
