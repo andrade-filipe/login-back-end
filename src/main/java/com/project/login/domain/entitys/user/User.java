@@ -34,4 +34,7 @@ public class User{
 
     @Enumerated(STRING)
     private UserRole userRole;
+
+    private Boolean locked;
+    private Boolean enabled;
 }

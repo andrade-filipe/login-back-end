@@ -31,8 +31,13 @@ public class UserAuthService {
         } else {
             user.setUserRole(UserRole.USER);
         }
+
         String encryptedPassword = new BCryptPasswordEncoder().encode(user.getPassword());
         user.setPassword(encryptedPassword);
+
+        user.setLocked(false);
+        user.setEnabled(false);
+
         return userRepository.save(user);
     }
 
