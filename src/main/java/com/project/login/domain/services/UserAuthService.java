@@ -21,7 +21,11 @@ public class UserAuthService {
 
     @Transactional
     public User register(User user) {
-        user.setUserRole(UserRole.USER);
+        if(user.getUsername().contains("ADMIN")){
+            user.setUserRole(UserRole.ADMIN);
+        } else {
+            user.setUserRole(UserRole.USER);
+        }
         String encryptedPassword = new BCryptPasswordEncoder().encode(user.getPassword());
         user.setPassword(encryptedPassword);
         return userRepository.save(user);
@@ -29,7 +33,7 @@ public class UserAuthService {
 
     public void login(LoginInput data){
         UsernamePasswordAuthenticationToken token =
-                new UsernamePasswordAuthenticationToken(data.login(), data.password());
+                new UsernamePasswordAuthenticationToken(data.username(), data.password());
         Authentication auth =
                 this.authenticationManager.authenticate(token);
     }
