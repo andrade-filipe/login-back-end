@@ -3,6 +3,7 @@ package com.project.login.outside.application.v1.controllers;
 import com.project.login.domain.entitys.user.User;
 import com.project.login.domain.repositorys.UserRepository;
 import com.project.login.domain.services.UserAuthService;
+import com.project.login.outside.representation.mapper.UserLoginMapper;
 import com.project.login.outside.representation.mapper.UserRegisterMapper;
 import com.project.login.outside.representation.model.input.LoginInput;
 import com.project.login.outside.representation.model.input.UserRegisterInput;
@@ -24,6 +25,7 @@ public class UserAuthController {
     private final UserRepository userRepository;
     private final UserAuthService userAuthService;
     private final UserRegisterMapper userRegisterMapper;
+    private final UserLoginMapper userLoginMapper;
 
 
     @GetMapping("/all")
@@ -34,7 +36,7 @@ public class UserAuthController {
     @PostMapping("/login")
     @ResponseStatus(OK)
     public LoginResponse login(@Valid @RequestBody LoginInput data){
-        return userAuthService.login(data);
+        return userLoginMapper.toResponse(userAuthService.login(data));
     }
 
     @PostMapping("/register")

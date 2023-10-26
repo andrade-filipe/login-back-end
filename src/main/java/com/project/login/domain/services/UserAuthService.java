@@ -1,5 +1,6 @@
 package com.project.login.domain.services;
 
+import com.project.login.domain.entitys.Login;
 import com.project.login.domain.entitys.enums.UserRole;
 import com.project.login.domain.entitys.user.User;
 import com.project.login.domain.repositorys.UserRepository;
@@ -36,12 +37,12 @@ public class UserAuthService {
         return userRepository.save(user);
     }
 
-    public LoginResponse login(LoginInput data){
+    public Login login(LoginInput data){
+        User user;
+        String token;
+
         UsernamePasswordAuthenticationToken usernamePassword = new UsernamePasswordAuthenticationToken(data.login(), data.password());
         Authentication auth = this.authenticationManager.authenticate(usernamePassword);
-
-        String token = tokenService.generateToken((User) auth.getPrincipal());
-        User user;
 
         if(userRepository.findByUsername(data.login()).isPresent()){
             user = userRepository.findByUsername(data.login()).get();
@@ -51,6 +52,12 @@ public class UserAuthService {
             throw new NoSuchElementException("Could not find User");
         }
 
-        return new LoginResponse(user.getName(), token);
+        if(auth.isAuthenticated()){
+            token = tokenService.generateToken(user);
+        } else {
+            throw new RuntimeException("Is not authenticated");
+        }
+
+        return new Login(user.getName(), token);
     }
 }
