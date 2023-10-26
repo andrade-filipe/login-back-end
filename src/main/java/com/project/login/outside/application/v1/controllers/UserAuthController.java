@@ -6,12 +6,10 @@ import com.project.login.domain.services.UserAuthService;
 import com.project.login.outside.representation.mapper.UserRegisterMapper;
 import com.project.login.outside.representation.model.input.LoginInput;
 import com.project.login.outside.representation.model.input.UserRegisterInput;
+import com.project.login.outside.representation.model.response.LoginResponse;
 import com.project.login.outside.representation.model.response.UserRegisterResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,9 +32,9 @@ public class UserAuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity login(@Valid @RequestBody LoginInput data){
-        userAuthService.login(data);
-        return ResponseEntity.ok().build();
+    @ResponseStatus(OK)
+    public LoginResponse login(@Valid @RequestBody LoginInput data){
+        return userAuthService.login(data);
     }
 
     @PostMapping("/register")
