@@ -41,8 +41,8 @@ public class WebSecurityConfig{
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(POST,"/api/v1/auth/login").permitAll()
                         .requestMatchers(POST,"/api/v1/auth/register").permitAll()
-//                        .requestMatchers(POST, "/api/v1/auth/register").hasRole("ADMIN")
-                        .anyRequest().authenticated())
+                        .anyRequest()
+                        .authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }

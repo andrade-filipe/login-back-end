@@ -6,7 +6,6 @@ import com.project.login.domain.entitys.user.User;
 import com.project.login.domain.repositorys.UserRepository;
 import com.project.login.infrastructure.security.TokenService;
 import com.project.login.outside.representation.model.input.LoginInput;
-import com.project.login.outside.representation.model.response.LoginResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -37,6 +36,7 @@ public class UserAuthService {
         return userRepository.save(user);
     }
 
+    @Transactional
     public Login login(LoginInput data){
         User user;
         String token;
@@ -57,7 +57,6 @@ public class UserAuthService {
         } else {
             throw new RuntimeException("Is not authenticated");
         }
-
         return new Login(user.getName(), token);
     }
 }
