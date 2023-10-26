@@ -16,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import static org.springframework.http.HttpMethod.*;
 import static org.springframework.security.config.http.SessionCreationPolicy.*;
@@ -24,6 +25,8 @@ import static org.springframework.security.config.http.SessionCreationPolicy.*;
 @RequiredArgsConstructor
 @EnableWebSecurity
 public class WebSecurityConfig{
+
+    private final SecurityFilter securityFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder(){
@@ -40,6 +43,7 @@ public class WebSecurityConfig{
                         .requestMatchers(POST,"/api/v1/auth/register").permitAll()
 //                        .requestMatchers(POST, "/api/v1/auth/register").hasRole("ADMIN")
                         .anyRequest().authenticated())
+                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
