@@ -33,7 +33,7 @@ public class UserAuthService {
 
     public void login(LoginInput data){
         UsernamePasswordAuthenticationToken token =
-                new UsernamePasswordAuthenticationToken(data.username(), data.password());
+                new UsernamePasswordAuthenticationToken(data.login(), data.password());
         Authentication auth =
                 this.authenticationManager.authenticate(token);
     }
