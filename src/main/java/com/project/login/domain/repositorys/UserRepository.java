@@ -1,6 +1,7 @@
 package com.project.login.domain.repositorys;
 
 import com.project.login.domain.entitys.user.User;
+import com.project.login.domain.entitys.user.UserDetail;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

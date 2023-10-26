@@ -21,8 +21,8 @@ public class UserRegisterController {
 
     @PostMapping
     @ResponseStatus(CREATED)
-    public UserRegisterResponse register(@Valid @RequestBody UserRegisterInput registerInput){
-        User newUser = userRegisterMapper.toEntity(registerInput);
+    public UserRegisterResponse register(@Valid @RequestBody UserRegisterInput userRegisterInput){
+        User newUser = userRegisterMapper.toEntity(userRegisterInput);
         User registeredUser = userRegisterService.register(newUser);
         return userRegisterMapper.toResponse(registeredUser);
     }
