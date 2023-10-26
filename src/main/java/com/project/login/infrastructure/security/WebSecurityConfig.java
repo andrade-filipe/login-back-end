@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
+import static org.springframework.http.HttpMethod.*;
 import static org.springframework.security.config.http.SessionCreationPolicy.*;
 
 @Configuration
@@ -35,7 +36,9 @@ public class WebSecurityConfig{
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST, "/api/v1/register/all").hasRole("ADMIN")
+                        .requestMatchers(POST,"/api/v1/auth/login").permitAll()
+                        .requestMatchers(POST,"/api/v1/auth/register").permitAll()
+//                        .requestMatchers(POST, "/api/v1/auth/register").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .build();
     }
