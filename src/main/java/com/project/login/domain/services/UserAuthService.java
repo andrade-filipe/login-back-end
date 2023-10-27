@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -43,7 +44,7 @@ public class UserAuthService {
         String body =
                 "http://localhost:8080/api/v1/auth/register/"
                 + user.getUsername() +
-                "/confirm?token="
+                "/confirm/"
                 + tokenService.generateToken(user);
 
         emailSenderService.sendEmail(user.getEmail(), "Confirm your email", body);
@@ -79,6 +80,10 @@ public class UserAuthService {
             user.setEnabled(true);
             user.setLocked(true);
             userRepository.save(user);
+
+            var usernamePassword = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
+            var auth = authenticationManager.authenticate(usernamePassword);
+
             return "confirm";
         }
         return "not confirmed";
