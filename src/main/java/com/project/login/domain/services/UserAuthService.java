@@ -7,10 +7,8 @@ import com.project.login.domain.repositorys.UserRepository;
 import com.project.login.infrastructure.security.TokenService;
 import com.project.login.outside.representation.model.input.LoginInput;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,25 +27,23 @@ public class UserAuthService {
 
     @Transactional
     public User register(User user) {
+        String token = tokenService.generateToken(user);
+
         if(user.getUsername().contains("ADMIN")){
             user.setUserRole(UserRole.ADMIN);
         } else {
             user.setUserRole(UserRole.USER);
         }
 
-        String encryptedPassword = new BCryptPasswordEncoder().encode(user.getPassword());
-        user.setPassword(encryptedPassword);
-
         user.setLocked(false);
         user.setEnabled(false);
 
-        String body =
-                "http://localhost:8080/api/v1/auth/register/"
-                + user.getUsername() +
-                "/confirm/"
-                + tokenService.generateToken(user);
+        String body = "http://localhost:8080/api/v1/auth/register/confirm?username=" + user.getUsername() + "&token=" + token;
 
         emailSenderService.sendEmail(user.getEmail(), "Confirm your email", body);
+
+        String encryptedPassword = new BCryptPasswordEncoder().encode(user.getPassword());
+        user.setPassword(encryptedPassword);
 
         return userRepository.save(user);
     }
@@ -72,20 +68,15 @@ public class UserAuthService {
     }
 
     @Transactional
-    public String confirm(String username, String token){
-        if(!tokenService.validateToken(token).isEmpty()){
+    public Login confirm(String username, String token){
             User user = userRepository
                     .findByUsername(username)
                     .orElseThrow(() -> new UsernameNotFoundException("User Doesn't exist"));
+
             user.setEnabled(true);
             user.setLocked(true);
             userRepository.save(user);
 
-            var usernamePassword = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
-            var auth = authenticationManager.authenticate(usernamePassword);
-
-            return "confirm";
+            return new Login(user.getName(), token);
         }
-        return "not confirmed";
     }
-}

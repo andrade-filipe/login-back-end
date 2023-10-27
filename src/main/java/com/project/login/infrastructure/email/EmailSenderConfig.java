@@ -8,7 +8,6 @@ public class EmailSenderConfig implements EmailSenderAdapter {
 
     @Override
     public void sendEmail(String toEmail, String subject, String body) {
-
     }
 
 }
