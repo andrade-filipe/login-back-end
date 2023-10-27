@@ -35,10 +35,10 @@ public class WebSecurityConfig{
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(GET, "/api/v1/home").permitAll()
                         .requestMatchers(POST,"/api/v1/auth/login").permitAll()
                         .requestMatchers(POST,"/api/v1/auth/register").permitAll()
                         .requestMatchers(GET, "/api/v1/auth/register/confirm").permitAll()
+                        .requestMatchers(GET, "/api/v1/home").permitAll()
                         .anyRequest()
                         .authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))

@@ -24,8 +24,4 @@ public class UserController {
         return "Hello, Admin!";
     }
 
-    //    @GetMapping("/all")
-    //    public List<UserRegisterResponse> getRegistered(){
-    //        return userRegisterMapper.toCollectionModel(userRepository.findAll());
-    //    }
 }
