@@ -43,19 +43,13 @@ public class UserAuthService {
 
     @Transactional
     public Login login(LoginInput data){
-        User user;
         String token;
+        User user = userRepository
+                .findByUsernameOrEmail(data.login(), data.login())
+                .orElseThrow(NoSuchElementException::new);
 
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.login(), data.password());
         var auth = this.authenticationManager.authenticate(usernamePassword);
-
-        if(userRepository.findByUsername(data.login()).isPresent()){
-            user = userRepository.findByUsername(data.login()).get();
-        } else if(userRepository.findByEmail(data.login()).isPresent()) {
-            user = userRepository.findByEmail(data.login()).get();
-        } else {
-            throw new NoSuchElementException("Could not find User");
-        }
 
         if(auth.isAuthenticated()){
             token = tokenService.generateToken(user);

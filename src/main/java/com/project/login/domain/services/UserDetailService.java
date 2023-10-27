@@ -12,30 +12,16 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserDetailService implements UserDetailsService {
 
-    private final String USER_EMAIL_NOT_FOUND_MSG = "user with email %s not found";
-    private final String USER_USERNAME_NOT_FOUND_MSG = "user with username %s not found";
+    private final String USER_LOGIN_NOT_FOUND_MSG = "user with login %s not found";
     private final UserRepository userRepository;
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
-        UserDetail userDetailResponse;
-        if(userRepository.findByUsername(login).isPresent()){
-            UserDetail userDetail = new UserDetail(userRepository
-                    .findByUsername(login)
-                    .orElseThrow(() ->
-                            new UsernameNotFoundException
-                                    (String.format(USER_USERNAME_NOT_FOUND_MSG, login))));
-            userDetailResponse = userDetail;
-        } else if (userRepository.findByEmail(login).isPresent()) {
-            UserDetail userDetail = new UserDetail(userRepository
-                    .findByEmail(login)
-                    .orElseThrow(() ->
-                            new UsernameNotFoundException
-                                    (String.format(USER_EMAIL_NOT_FOUND_MSG, login))));
-            userDetailResponse = userDetail;
-        } else {
-            throw new UsernameNotFoundException("User Not Found");
-        }
-
+        UserDetail userDetailResponse =
+                new UserDetail(userRepository
+                        .findByUsernameOrEmail(login, login)
+                        .orElseThrow(() ->
+                                new UsernameNotFoundException
+                                        (String.format(USER_LOGIN_NOT_FOUND_MSG, login))));
         return userDetailResponse;
     }
 }
