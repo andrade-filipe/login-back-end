@@ -62,6 +62,7 @@ public class UserAuthService {
         } else {
             throw new RuntimeException("Is not authenticated");
         }
+
         return new Login(user.getName(), token);
     }
 }
