@@ -14,6 +14,7 @@ public class UserDetailService implements UserDetailsService {
 
     private final String USER_LOGIN_NOT_FOUND_MSG = "user with login %s not found";
     private final UserRepository userRepository;
+
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
         UserDetail userDetailResponse =

@@ -6,6 +6,7 @@ import com.project.login.domain.entitys.user.User;
 import com.project.login.domain.repositorys.UserRepository;
 import com.project.login.infrastructure.security.TokenService;
 import com.project.login.outside.representation.model.input.LoginInput;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.NoSuchElementException;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class UserAuthService {
 
     private final UserRepository userRepository;
@@ -58,5 +59,10 @@ public class UserAuthService {
         }
 
         return new Login(user.getName(), token);
+    }
+
+    @Transactional
+    public String confirm(String token){
+        return "confirm";
     }
 }
