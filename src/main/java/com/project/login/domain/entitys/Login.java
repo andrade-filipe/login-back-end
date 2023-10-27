@@ -1,5 +1,6 @@
 package com.project.login.domain.entitys;
 
+import com.project.login.domain.entitys.enums.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,5 +10,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Login {
     private String name;
+    private UserRole role;
     private String token;
 }

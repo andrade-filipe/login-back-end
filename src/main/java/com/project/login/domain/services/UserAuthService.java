@@ -64,7 +64,7 @@ public class UserAuthService {
             throw new RuntimeException("Is not authenticated");
         }
 
-        return new Login(user.getName(), token);
+        return new Login(user.getName(), user.getUserRole(), token);
     }
 
     @Transactional
@@ -77,6 +77,6 @@ public class UserAuthService {
             user.setLocked(true);
             userRepository.save(user);
 
-            return new Login(user.getName(), token);
+            return new Login(user.getName(), user.getUserRole(), token);
         }
     }

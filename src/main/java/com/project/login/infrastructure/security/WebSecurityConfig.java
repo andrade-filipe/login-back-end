@@ -34,14 +34,16 @@ public class WebSecurityConfig{
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(POST,"/api/v1/auth/login").permitAll()
                         .requestMatchers(POST,"/api/v1/auth/register").permitAll()
                         .requestMatchers(GET, "/api/v1/auth/register/confirm").permitAll()
                         .requestMatchers(GET, "/api/v1/home").permitAll()
+                        .requestMatchers(GET, "/api/v1/home/user" ).hasAnyRole("ADMIN","USER")
+                        .requestMatchers(GET, "/api/v1/home/admin" ).hasRole("ADMIN")
                         .anyRequest()
                         .authenticated())
-                .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
