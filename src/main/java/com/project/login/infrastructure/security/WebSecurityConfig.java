@@ -34,7 +34,6 @@ public class WebSecurityConfig{
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(GET, "/api/v1/home").permitAll()
                         .requestMatchers(POST,"/api/v1/auth/login").permitAll()
@@ -42,8 +41,7 @@ public class WebSecurityConfig{
                         .requestMatchers(GET, "/api/v1/auth/register/confirm").permitAll()
                         .anyRequest()
                         .authenticated())
-                .oauth2Login(withDefaults())
-                .formLogin(withDefaults())
+                .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
