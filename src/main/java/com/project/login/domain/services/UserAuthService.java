@@ -42,7 +42,7 @@ public class UserAuthService {
 
         String body =
                 "http://localhost:8080/api/v1/auth/register/"
-                + user.getUserId() +
+                + user.getUsername() +
                 "/confirm?token="
                 + tokenService.generateToken(user);
 
@@ -71,10 +71,10 @@ public class UserAuthService {
     }
 
     @Transactional
-    public String confirm(String userId, String token){
+    public String confirm(String username, String token){
         if(!tokenService.validateToken(token).isEmpty()){
             User user = userRepository
-                    .findById(userId)
+                    .findByUsername(username)
                     .orElseThrow(() -> new UsernameNotFoundException("User Doesn't exist"));
             user.setEnabled(true);
             user.setLocked(true);

@@ -47,8 +47,10 @@ public class UserAuthController {
         return userRegisterMapper.toResponse(registeredUser);
     }
 
-    @GetMapping("/register/{userId}/confirm?token={token}")
-    public String confirm(@PathVariable String userId,@PathVariable String token){
-        return userAuthService.confirm(userId, token);
+    @PostMapping("/register/{username}/confirm?token={token}")
+    @ResponseStatus(OK)
+    public String confirm(@PathVariable("username") String username,
+                          @PathVariable("token") String token){
+        return userAuthService.confirm(username, token);
     }
 }
