@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -14,6 +15,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import static org.springframework.http.HttpMethod.*;
+import static org.springframework.security.config.Customizer.*;
 import static org.springframework.security.config.http.SessionCreationPolicy.*;
 
 @Configuration
@@ -34,11 +36,14 @@ public class WebSecurityConfig{
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(GET, "/api/v1/home").permitAll()
                         .requestMatchers(POST,"/api/v1/auth/login").permitAll()
                         .requestMatchers(POST,"/api/v1/auth/register").permitAll()
                         .requestMatchers(GET, "/api/v1/auth/register/confirm").permitAll()
                         .anyRequest()
                         .authenticated())
+                .oauth2Login(withDefaults())
+                .formLogin(withDefaults())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }

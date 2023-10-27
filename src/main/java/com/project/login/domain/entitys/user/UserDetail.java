@@ -1,5 +1,6 @@
 package com.project.login.domain.entitys.user;
 
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -7,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Collections;
 
+@Getter
 public class UserDetail implements UserDetails {
 
     private final User user;
@@ -22,9 +24,6 @@ public class UserDetail implements UserDetails {
         return Collections.singletonList(authority);
     }
 
-    public User getUser(){
-        return user;
-    }
     @Override
     public String getPassword() {
         return user.getPassword();
@@ -42,7 +41,7 @@ public class UserDetail implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return !user.getLocked();
+        return user.getLocked();
     }
 
     @Override

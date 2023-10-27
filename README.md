@@ -11,4 +11,4 @@
 <p>Authentication ✔️</p>
 <p>JWT tokens and Spring Security ✔️</p>
 <p>OAuth2 🔴</p>
-<p>Email Verification 🔴</p>
+<p>Email Verification ✔️</p>

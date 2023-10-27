@@ -1,7 +1,6 @@
 package com.project.login.outside.application.v1.controllers;
 
 import com.project.login.domain.entitys.user.User;
-import com.project.login.domain.repositorys.UserRepository;
 import com.project.login.domain.services.UserAuthService;
 import com.project.login.outside.representation.mapper.UserLoginMapper;
 import com.project.login.outside.representation.mapper.UserRegisterMapper;
@@ -13,8 +12,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 import static org.springframework.http.HttpStatus.*;
 
 @RestController
@@ -22,16 +19,9 @@ import static org.springframework.http.HttpStatus.*;
 @RequiredArgsConstructor
 public class UserAuthController {
 
-    private final UserRepository userRepository;
     private final UserAuthService userAuthService;
     private final UserRegisterMapper userRegisterMapper;
     private final UserLoginMapper userLoginMapper;
-
-
-    @GetMapping("/all")
-    public List<UserRegisterResponse> getRegistered(){
-        return userRegisterMapper.toCollectionModel(userRepository.findAll());
-    }
 
     @PostMapping("/login")
     @ResponseStatus(OK)
