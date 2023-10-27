@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +24,7 @@ public class UserAuthService {
     private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
-    private final UserDetailService userDetailService;
+    private final EmailSenderService emailSenderService;
 
     @Transactional
     public User register(User user) {
@@ -38,6 +39,14 @@ public class UserAuthService {
 
         user.setLocked(false);
         user.setEnabled(false);
+
+        String body =
+                "http://localhost:8080/api/v1/auth/register/"
+                + user.getUserId() +
+                "/confirm?token="
+                + tokenService.generateToken(user);
+
+        emailSenderService.sendEmail(user.getEmail(), "Confirm your email", body);
 
         return userRepository.save(user);
     }
@@ -62,7 +71,16 @@ public class UserAuthService {
     }
 
     @Transactional
-    public String confirm(String token){
-        return "confirm";
+    public String confirm(String userId, String token){
+        if(!tokenService.validateToken(token).isEmpty()){
+            User user = userRepository
+                    .findById(userId)
+                    .orElseThrow(() -> new UsernameNotFoundException("User Doesn't exist"));
+            user.setEnabled(true);
+            user.setLocked(true);
+            userRepository.save(user);
+            return "confirm";
+        }
+        return "not confirmed";
     }
 }
