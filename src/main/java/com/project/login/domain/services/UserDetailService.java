@@ -8,8 +8,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class UserDetailService implements UserDetailsService {
@@ -29,7 +27,7 @@ public class UserDetailService implements UserDetailsService {
             userDetailResponse = userDetail;
         } else if (userRepository.findByEmail(login).isPresent()) {
             UserDetail userDetail = new UserDetail(userRepository
-                    .findByUsername(login)
+                    .findByEmail(login)
                     .orElseThrow(() ->
                             new UsernameNotFoundException
                                     (String.format(USER_EMAIL_NOT_FOUND_MSG, login))));
