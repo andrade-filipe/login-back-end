@@ -52,10 +52,12 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
     }
 
     /**
-     * JWTCreationException
-     * JWTVerificationException
+     * Exception class is used in my application by WebSecurityConfig
+     * this method is made to handle exceptions from there
+     *
+     * @param exception
+     * @return response in problemDetail pattern
      */
-
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleException(Exception exception){
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -64,6 +66,12 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
         return problemDetail;
     }
 
+    /**
+     * All exceptions of these types come from SecurityFilter on my application
+     *
+     * @param exception
+     * @return response in problemDetail pattern
+     */
     @ExceptionHandler({ServletException.class, IOException.class})
     public ProblemDetail handleSecurityFilter(Exception exception){
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -73,6 +81,13 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
         return problemDetail;
     }
 
+    /**
+     * In case someone tries to delete a user that cannot be deleted inside the
+     * database
+     *
+     * @param exception
+     * @return response in problemDetail pattern
+     */
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ProblemDetail handleDataIntegrity(DataIntegrityViolationException exception){
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.CONFLICT);
@@ -82,6 +97,12 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
         return problemDetail;
     }
 
+    /**
+     * handles JWT api exceptions
+     *
+     * @param exception
+     * @return response in problemDetail pattern
+     */
     @ExceptionHandler(JWTCreationException.class)
     public ProblemDetail handleJwtTokens(RuntimeException exception){
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -98,6 +119,12 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
         return problemDetail;
     }
 
+    /**
+     * if EmailService fails to send a email for any reason
+     *
+     * @param exception
+     * @return response in problemDetail pattern
+     */
     @ExceptionHandler(EmailServiceException.class)
     public ProblemDetail handleEmailService(EmailServiceException exception){
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);

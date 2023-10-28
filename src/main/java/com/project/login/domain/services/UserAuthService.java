@@ -24,17 +24,23 @@ public class UserAuthService {
     private final TokenService tokenService;
     private final EmailSenderService emailSenderService;
 
+    /**
+     * Responsible for saving all users inside the database.
+     * method defines the role, the state(locked, enabled) and
+     * encrypts the password, also calls the confirmation email method
+     * that sends an email to the user
+     *
+     * @param user
+     * @return User that was sucessfully saved into the database
+     */
     @Transactional
     public User register(User user) {
         if(user == null){
             throw new UserAuthServiceException("User is Empty");
         }
-        //Generating Token
-        String token = tokenService.generateToken(user);
 
-        //Sending Confirmation Email
-        String body = "http://localhost:8080/api/v1/auth/register/confirm?username=" + user.getUsername() + "&token=" + token;
-        emailSenderService.sendEmail(user.getEmail(), "Confirm your email", body);
+        //Sends the confirmation Email
+        this.confirmationEmail(user);
 
         //Encrypting Password
         String encryptedPassword = new BCryptPasswordEncoder().encode(user.getPassword());
@@ -52,6 +58,13 @@ public class UserAuthService {
         return userRepository.save(user);
     }
 
+    /**
+     * Responsible for authenticating every user that wants to login
+     * and do requests to my application
+     *
+     * @param data
+     * @return Login information(token, role, name)
+     */
     @Transactional
     public Login login(LoginInput data) {
         String token;
@@ -76,6 +89,14 @@ public class UserAuthService {
     //        return new Login(null,null,null);
     //  }
 
+    /**
+     * changes the state of the user(locked, enabled) confirming the email,
+     * now the user can acess the application
+     *
+     * @param username
+     * @param token
+     * @return Login information, front-end can instantly login after email confirmation
+     */
     @Transactional
     public Login confirm(String username, String token){
         User user = userRepository
@@ -90,6 +111,12 @@ public class UserAuthService {
         return new Login(user.getName(), user.getUserRole(), token);
     }
 
+    /**
+     * Password change method updated the user's new password
+     *
+     * @param email
+     * @param newPassword
+     */
     @Transactional
     public void changePassword(String email, String newPassword){
         User user = userRepository
@@ -100,5 +127,18 @@ public class UserAuthService {
         user.setPassword(encryptedPassword);
 
         userRepository.save(user);
+    }
+
+    /**
+     * Sends a confirmation email using EmailSenderService
+     * @param user
+     */
+    private void confirmationEmail(User user){
+        //Generating Token
+        String token = tokenService.generateToken(user);
+
+        //Sending Confirmation Email
+        String body = "http://localhost:8080/api/v1/auth/register/confirm?username=" + user.getUsername() + "&token=" + token;
+        emailSenderService.sendEmail(user.getEmail(), "Confirm your email", body);
     }
 }
