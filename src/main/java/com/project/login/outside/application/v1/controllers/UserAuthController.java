@@ -27,6 +27,12 @@ public class UserAuthController {
     @PostMapping("/login")
     @ResponseStatus(OK)
     public LoginResponse login(@Valid @RequestBody LoginInput data){
+        return userLoginMapper.toResponse(userAuthService.loginOAuth(data));
+    }
+
+    @PostMapping("/login/oauth")
+    @ResponseStatus(OK)
+    public LoginResponse loginOAuth(@Valid @RequestBody LoginInput data){
         return userLoginMapper.toResponse(userAuthService.login(data));
     }
 

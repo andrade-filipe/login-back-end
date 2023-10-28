@@ -68,6 +68,11 @@ public class UserAuthService {
     }
 
     @Transactional
+    public Login loginOAuth(LoginInput data){
+        return new Login(null,null,null);
+    }
+
+    @Transactional
     public Login confirm(String username, String token){
             User user = userRepository
                     .findByUsername(username)
