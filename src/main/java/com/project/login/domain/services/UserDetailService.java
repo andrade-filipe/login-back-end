@@ -22,7 +22,7 @@ public class UserDetailService implements UserDetailsService {
                         .findByUsernameOrEmail(login, login)
                         .orElseThrow(() ->
                                 new UsernameNotFoundException
-                                        (String.format(USER_LOGIN_NOT_FOUND_MSG, login))));
+                                        (String.format("User detail: " + USER_LOGIN_NOT_FOUND_MSG, login))));
         return userDetailResponse;
     }
 }
