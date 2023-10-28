@@ -4,12 +4,14 @@ import com.project.login.domain.entitys.user.User;
 import com.project.login.domain.services.UserAuthService;
 import com.project.login.outside.representation.mapper.UserLoginMapper;
 import com.project.login.outside.representation.mapper.UserRegisterMapper;
+import com.project.login.outside.representation.model.input.ChangePasswordInput;
 import com.project.login.outside.representation.model.input.LoginInput;
 import com.project.login.outside.representation.model.input.UserRegisterInput;
 import com.project.login.outside.representation.model.response.LoginResponse;
 import com.project.login.outside.representation.model.response.UserRegisterResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.HttpStatus.*;
@@ -30,11 +32,11 @@ public class UserAuthController {
         return userLoginMapper.toResponse(userAuthService.login(data));
     }
 
-//    @PostMapping("/login/oauth")
-//    @ResponseStatus(OK)
-//    public LoginResponse loginOAuth(@Valid @RequestBody LoginInput data){
-//        return userLoginMapper.toResponse(userAuthService.loginOAuth(data));
-//    }
+    //    @PostMapping("/login/oauth2")
+    //    @ResponseStatus(OK)
+    //    public LoginResponse loginOAuth(@Valid @RequestBody LoginInput data){
+    //        return userLoginMapper.toResponse(userAuthService.loginOAuth(data));
+    //    }
 
     @PostMapping("/register")
     @ResponseStatus(CREATED)
@@ -48,5 +50,14 @@ public class UserAuthController {
     public LoginResponse confirm(@RequestParam("username") String username,
                                  @RequestParam("token") String token){
         return userLoginMapper.toResponse(userAuthService.confirm(username, token));
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity changePassword(@Valid @RequestBody ChangePasswordInput changePasswordInput){
+        userAuthService.changePassword(
+                changePasswordInput.getEmail(),
+                changePasswordInput.getNewPassword()
+        );
+        return ResponseEntity.ok("Password Changed");
     }
 }

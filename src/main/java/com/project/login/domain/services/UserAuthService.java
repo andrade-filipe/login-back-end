@@ -67,10 +67,10 @@ public class UserAuthService {
         return new Login(user.getName(), user.getUserRole(), token);
     }
 
-//    @Transactional
-//    public Login loginOAuth(LoginInput data){
-//        return new Login(null,null,null);
-//    }
+    //    @Transactional
+    //    public Login loginOAuth(LoginInput data){
+    //        return new Login(null,null,null);
+    //  }
 
     @Transactional
     public Login confirm(String username, String token){
@@ -83,5 +83,17 @@ public class UserAuthService {
             userRepository.save(user);
 
             return new Login(user.getName(), user.getUserRole(), token);
-        }
     }
+
+    @Transactional
+    public void changePassword(String email, String newPassword){
+        User user = userRepository
+                .findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User Doesn't exist"));
+
+        String encryptedPassword = new BCryptPasswordEncoder().encode(newPassword);
+        user.setPassword(encryptedPassword);
+
+        userRepository.save(user);
+    }
+}
