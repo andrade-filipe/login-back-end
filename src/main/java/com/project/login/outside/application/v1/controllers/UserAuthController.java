@@ -13,7 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -27,13 +28,13 @@ public class UserAuthController {
 
     @PostMapping("/login")
     @ResponseStatus(OK)
-    public LoginResponse login(@Valid @RequestBody LoginInput data){
+    public LoginResponse login(@Valid @RequestBody LoginInput data) {
         return userLoginMapper.toResponse(userAuthService.login(data));
     }
 
     @PostMapping("/register")
     @ResponseStatus(CREATED)
-    public void register(@Valid @RequestBody UserRegisterInput userRegisterInput){
+    public void register(@Valid @RequestBody UserRegisterInput userRegisterInput) {
         User newUser = userRegisterMapper.toEntity(userRegisterInput);
         userAuthService.register(newUser);
     }
@@ -41,12 +42,12 @@ public class UserAuthController {
     @GetMapping("/register/confirm")
     @ResponseStatus(OK)
     public LoginResponse confirm(@RequestParam("username") String username,
-                                 @RequestParam("token") String token){
+                                 @RequestParam("token") String token) {
         return userLoginMapper.toResponse(userAuthService.confirm(username, token));
     }
 
     @PostMapping("/change-password")
-    public ResponseEntity changePassword(@Valid @RequestBody ChangePasswordInput changePasswordInput){
+    public ResponseEntity changePassword(@Valid @RequestBody ChangePasswordInput changePasswordInput) {
         userAuthService.changePassword(
                 changePasswordInput.getEmail(),
                 changePasswordInput.getNewPassword()

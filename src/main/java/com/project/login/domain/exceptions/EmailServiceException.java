@@ -1,6 +1,6 @@
 package com.project.login.domain.exceptions;
 
-public class EmailServiceException extends RuntimeException{
+public class EmailServiceException extends RuntimeException {
     public EmailServiceException(String message) {
         super(message);
     }

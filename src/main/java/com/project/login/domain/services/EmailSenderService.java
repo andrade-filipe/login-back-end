@@ -22,7 +22,7 @@ public class EmailSenderService implements EmailSender {
             message.setSubject(subject);
             message.setText(body);
             mailSender.send(message);
-        }catch (EmailServiceException exception){
+        } catch (EmailServiceException exception) {
             throw new EmailServiceException("Couldn't send the email");
         }
 

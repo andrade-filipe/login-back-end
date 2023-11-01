@@ -11,16 +11,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     @GetMapping
-    public String home(){
+    public String home() {
         return "Home";
     }
+
     @GetMapping("/user")
-    public String user(){
+    public String user() {
         return "Hello, User!";
     }
 
     @GetMapping("/admin")
-    public String admin(){
+    public String admin() {
         return "Hello, Admin!";
     }
 

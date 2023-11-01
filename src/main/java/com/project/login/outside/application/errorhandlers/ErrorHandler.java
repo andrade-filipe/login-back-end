@@ -59,7 +59,7 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
      * @return response in problemDetail pattern
      */
     @ExceptionHandler(Exception.class)
-    public ProblemDetail handleException(Exception exception){
+    public ProblemDetail handleException(Exception exception) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         problemDetail.setTitle(exception.getMessage());
         problemDetail.setType(URI.create("https://login-server.com/error/web-security-config"));
@@ -73,7 +73,7 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
      * @return response in problemDetail pattern
      */
     @ExceptionHandler({ServletException.class, IOException.class})
-    public ProblemDetail handleSecurityFilter(Exception exception){
+    public ProblemDetail handleSecurityFilter(Exception exception) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         problemDetail.setTitle(exception.getMessage());
         problemDetail.setDetail("Problem is in Method -> doFilterInternal, inside SecurityFilter Class");
@@ -89,7 +89,7 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
      * @return response in problemDetail pattern
      */
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ProblemDetail handleDataIntegrity(DataIntegrityViolationException exception){
+    public ProblemDetail handleDataIntegrity(DataIntegrityViolationException exception) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.CONFLICT);
         problemDetail.setTitle("Resource is being used");
         problemDetail.setDetail(exception.getMessage());
@@ -104,7 +104,7 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
      * @return response in problemDetail pattern
      */
     @ExceptionHandler(JWTCreationException.class)
-    public ProblemDetail handleJwtTokens(RuntimeException exception){
+    public ProblemDetail handleJwtTokens(RuntimeException exception) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         problemDetail.setTitle(exception.getMessage());
         problemDetail.setType(URI.create("https://login-server.com/error/jwt-tokens"));
@@ -112,7 +112,7 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)
-    public ProblemDetail handleUsernameNotFound(UsernameNotFoundException exception){
+    public ProblemDetail handleUsernameNotFound(UsernameNotFoundException exception) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problemDetail.setTitle(exception.getMessage());
         problemDetail.setType(URI.create("https://login-server.com/error/user-not-found"));
@@ -126,7 +126,7 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
      * @return response in problemDetail pattern
      */
     @ExceptionHandler(EmailServiceException.class)
-    public ProblemDetail handleEmailService(EmailServiceException exception){
+    public ProblemDetail handleEmailService(EmailServiceException exception) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         problemDetail.setTitle(exception.getMessage());
         problemDetail.setDetail("For some unknown reason the email could not be sent," +
@@ -136,7 +136,7 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(UserAuthServiceException.class)
-    public ProblemDetail handleUserAuth(UserAuthServiceException exception){
+    public ProblemDetail handleUserAuth(UserAuthServiceException exception) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problemDetail.setTitle(exception.getMessage());
         problemDetail.setDetail("For some unknown reason a Empty User reached register method inside UserAuthService");

@@ -15,15 +15,15 @@ public class UserRegisterMapper {
 
     private final ModelMapper modelMapper;
 
-    public User toEntity(UserRegisterInput userRegisterInput){
+    public User toEntity(UserRegisterInput userRegisterInput) {
         return modelMapper.map(userRegisterInput, User.class);
     }
 
-    public UserRegisterResponse toResponse(User user){
+    public UserRegisterResponse toResponse(User user) {
         return modelMapper.map(user, UserRegisterResponse.class);
     }
 
-    public List<UserRegisterResponse> toCollectionModel(List<User> users){
+    public List<UserRegisterResponse> toCollectionModel(List<User> users) {
         return users.stream()
                 .map(this::toResponse)
                 .toList();

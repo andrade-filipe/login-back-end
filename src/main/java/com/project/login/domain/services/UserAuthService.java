@@ -34,7 +34,7 @@ public class UserAuthService {
      */
     @Transactional
     public void register(User user) {
-        if(user == null){
+        if (user == null) {
             throw new UserAuthServiceException("User is Empty");
         }
 
@@ -44,7 +44,7 @@ public class UserAuthService {
         //Encrypting Password
         String encryptedPassword = new BCryptPasswordEncoder().encode(user.getPassword());
 
-        if(user.getUsername().contains("ADMIN")){
+        if (user.getUsername().contains("ADMIN")) {
             user.setUserRole(UserRole.ADMIN);
         } else {
             user.setUserRole(UserRole.USER);
@@ -74,7 +74,7 @@ public class UserAuthService {
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.login(), data.password());
         var auth = this.authenticationManager.authenticate(usernamePassword);
 
-        if(auth.isAuthenticated()){
+        if (auth.isAuthenticated()) {
             token = tokenService.generateToken(user);
         } else {
             throw new RuntimeException("Is not authenticated");
@@ -93,11 +93,11 @@ public class UserAuthService {
      * now the user can access the application
      *
      * @param username identifier
-     * @param token to access the application
+     * @param token    to access the application
      * @return Login information, front-end can instantly login after email confirmation
      */
     @Transactional
-    public Login confirm(String username, String token){
+    public Login confirm(String username, String token) {
         User user = userRepository
                 .findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User Doesn't exist"));
@@ -112,9 +112,10 @@ public class UserAuthService {
 
     /**
      * Sends a confirmation email using EmailSenderService
+     *
      * @param user identifier
      */
-    private void confirmationEmail(User user){
+    private void confirmationEmail(User user) {
         //Generating Token
         String token = tokenService.generateToken(user);
 
@@ -130,11 +131,11 @@ public class UserAuthService {
     /**
      * Password change method updated the user's new password
      *
-     * @param email to identify
+     * @param email       to identify
      * @param newPassword change the old to this new password
      */
     @Transactional
-    public void changePassword(String email, String newPassword){
+    public void changePassword(String email, String newPassword) {
         User user = userRepository
                 .findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User Doesn't exist"));

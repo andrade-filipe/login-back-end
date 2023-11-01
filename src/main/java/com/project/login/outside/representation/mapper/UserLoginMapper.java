@@ -12,7 +12,7 @@ public class UserLoginMapper {
 
     private final ModelMapper modelMapper;
 
-    public LoginResponse toResponse(Login login){
+    public LoginResponse toResponse(Login login) {
         return modelMapper.map(login, LoginResponse.class);
     }
 }
