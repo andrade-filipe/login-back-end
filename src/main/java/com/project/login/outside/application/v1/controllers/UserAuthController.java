@@ -8,7 +8,6 @@ import com.project.login.outside.representation.model.input.ChangePasswordInput;
 import com.project.login.outside.representation.model.input.LoginInput;
 import com.project.login.outside.representation.model.input.UserRegisterInput;
 import com.project.login.outside.representation.model.response.LoginResponse;
-import com.project.login.outside.representation.model.response.UserRegisterResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
