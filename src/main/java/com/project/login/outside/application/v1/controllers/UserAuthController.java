@@ -31,12 +31,6 @@ public class UserAuthController {
         return userLoginMapper.toResponse(userAuthService.login(data));
     }
 
-    //    @PostMapping("/login/oauth2")
-    //    @ResponseStatus(OK)
-    //    public LoginResponse loginOAuth(@Valid @RequestBody LoginInput data){
-    //        return userLoginMapper.toResponse(userAuthService.loginOAuth(data));
-    //    }
-
     @PostMapping("/register")
     @ResponseStatus(CREATED)
     public void register(@Valid @RequestBody UserRegisterInput userRegisterInput){
@@ -45,6 +39,7 @@ public class UserAuthController {
     }
 
     @GetMapping("/register/confirm")
+    @ResponseStatus(OK)
     public LoginResponse confirm(@RequestParam("username") String username,
                                  @RequestParam("token") String token){
         return userLoginMapper.toResponse(userAuthService.confirm(username, token));
@@ -58,4 +53,10 @@ public class UserAuthController {
         );
         return ResponseEntity.ok("Password Changed");
     }
+
+    //    @PostMapping("/login/oauth2")
+    //    @ResponseStatus(OK)
+    //    public LoginResponse loginOAuth(@Valid @RequestBody LoginInput data){
+    //        return userLoginMapper.toResponse(userAuthService.loginOAuth(data));
+    //    }
 }
