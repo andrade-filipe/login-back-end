@@ -40,10 +40,9 @@ public class UserAuthController {
 
     @PostMapping("/register")
     @ResponseStatus(CREATED)
-    public UserRegisterResponse register(@Valid @RequestBody UserRegisterInput userRegisterInput){
+    public void register(@Valid @RequestBody UserRegisterInput userRegisterInput){
         User newUser = userRegisterMapper.toEntity(userRegisterInput);
-        User registeredUser = userAuthService.register(newUser);
-        return userRegisterMapper.toResponse(registeredUser);
+        userAuthService.register(newUser);
     }
 
     @GetMapping("/register/confirm")

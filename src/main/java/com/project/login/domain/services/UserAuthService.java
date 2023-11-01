@@ -30,11 +30,10 @@ public class UserAuthService {
      * encrypts the password, also calls the confirmation email method
      * that sends an email to the user
      *
-     * @param user
-     * @return User that was sucessfully saved into the database
+     * @param user registered
      */
     @Transactional
-    public User register(User user) {
+    public void register(User user) {
         if(user == null){
             throw new UserAuthServiceException("User is Empty");
         }
@@ -55,14 +54,14 @@ public class UserAuthService {
         user.setEnabled(false);
         user.setPassword(encryptedPassword);
 
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 
     /**
      * Responsible for authenticating every user that wants to login
      * and do requests to my application
      *
-     * @param data
+     * @param data of a logged user
      * @return Login information(token, role, name)
      */
     @Transactional
@@ -91,10 +90,10 @@ public class UserAuthService {
 
     /**
      * changes the state of the user(locked, enabled) confirming the email,
-     * now the user can acess the application
+     * now the user can access the application
      *
-     * @param username
-     * @param token
+     * @param username identifier
+     * @param token to access the application
      * @return Login information, front-end can instantly login after email confirmation
      */
     @Transactional
@@ -112,10 +111,27 @@ public class UserAuthService {
     }
 
     /**
+     * Sends a confirmation email using EmailSenderService
+     * @param user identifier
+     */
+    private void confirmationEmail(User user){
+        //Generating Token
+        String token = tokenService.generateToken(user);
+
+        //Sending Confirmation Email
+        String body = "http://localhost:8080/api/v1/auth/register/confirm?username="
+                + user.getUsername()
+                + "&token="
+                + token;
+
+        emailSenderService.sendEmail(user.getEmail(), "Confirm your email", body);
+    }
+
+    /**
      * Password change method updated the user's new password
      *
-     * @param email
-     * @param newPassword
+     * @param email to identify
+     * @param newPassword change the old to this new password
      */
     @Transactional
     public void changePassword(String email, String newPassword){
@@ -127,18 +143,5 @@ public class UserAuthService {
         user.setPassword(encryptedPassword);
 
         userRepository.save(user);
-    }
-
-    /**
-     * Sends a confirmation email using EmailSenderService
-     * @param user
-     */
-    private void confirmationEmail(User user){
-        //Generating Token
-        String token = tokenService.generateToken(user);
-
-        //Sending Confirmation Email
-        String body = "http://localhost:8080/api/v1/auth/register/confirm?username=" + user.getUsername() + "&token=" + token;
-        emailSenderService.sendEmail(user.getEmail(), "Confirm your email", body);
     }
 }
