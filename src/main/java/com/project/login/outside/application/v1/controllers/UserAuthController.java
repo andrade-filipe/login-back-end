@@ -49,8 +49,8 @@ public class UserAuthController {
     @PostMapping("/change-password")
     public ResponseEntity changePassword(@Valid @RequestBody ChangePasswordInput changePasswordInput) {
         userAuthService.changePassword(
-                changePasswordInput.getEmail(),
-                changePasswordInput.getNewPassword()
+            changePasswordInput.getEmail(),
+            changePasswordInput.getNewPassword()
         );
         return ResponseEntity.ok("Password Changed");
     }

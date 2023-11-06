@@ -18,11 +18,11 @@ public class UserDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
         UserDetail userDetailResponse =
-                new UserDetail(userRepository
-                        .findByUsernameOrEmail(login, login)
-                        .orElseThrow(() ->
-                                new UsernameNotFoundException
-                                        (String.format("User detail: " + USER_LOGIN_NOT_FOUND_MSG, login))));
+            new UserDetail(userRepository
+                .findByUsernameOrEmail(login, login)
+                .orElseThrow(() ->
+                    new UsernameNotFoundException
+                        (String.format("User detail: " + USER_LOGIN_NOT_FOUND_MSG, login))));
         return userDetailResponse;
     }
 }

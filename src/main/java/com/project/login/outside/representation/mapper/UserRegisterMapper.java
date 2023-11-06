@@ -25,7 +25,7 @@ public class UserRegisterMapper {
 
     public List<UserRegisterResponse> toCollectionModel(List<User> users) {
         return users.stream()
-                .map(this::toResponse)
-                .toList();
+            .map(this::toResponse)
+            .toList();
     }
 }

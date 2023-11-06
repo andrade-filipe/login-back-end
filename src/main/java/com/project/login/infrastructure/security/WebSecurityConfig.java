@@ -32,35 +32,35 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(
-                                "/v2/api-docs",
-                                "/v3/api-docs",
-                                "/v3/api-docs/**",
-                                "/swagger-ui.html",
-                                "/swagger-ui/**",
-                                "/swagger-resources",
-                                "/swagger-resources/**",
-                                "/configuration/ui",
-                                "/configuration/security",
-                                "/webjars/**").permitAll()
-                        .requestMatchers(POST, "/api/v1/auth/**").permitAll()
-                        .requestMatchers(GET, "/api/v1/auth/**").permitAll()
-                        .requestMatchers(GET, "/api/v1/home").permitAll()
-                        .requestMatchers(GET, "/api/v1/home/user").hasAnyRole("ADMIN", "USER")
-                        .requestMatchers(GET, "/api/v1/home/admin").hasRole("ADMIN")
-                        .anyRequest()
-                        .authenticated())
-                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
+            .csrf(AbstractHttpConfigurer::disable)
+            .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
+            .authorizeHttpRequests(authorize -> authorize
+                .requestMatchers(
+                    "/v2/api-docs",
+                    "/v3/api-docs",
+                    "/v3/api-docs/**",
+                    "/swagger-ui.html",
+                    "/swagger-ui/**",
+                    "/swagger-resources",
+                    "/swagger-resources/**",
+                    "/configuration/ui",
+                    "/configuration/security",
+                    "/webjars/**").permitAll()
+                .requestMatchers(POST, "/api/v1/auth/**").permitAll()
+                .requestMatchers(GET, "/api/v1/auth/**").permitAll()
+                .requestMatchers(GET, "/api/v1/home").permitAll()
+                .requestMatchers(GET, "/api/v1/home/user").hasAnyRole("ADMIN", "USER")
+                .requestMatchers(GET, "/api/v1/home/admin").hasRole("ADMIN")
+                .anyRequest()
+                .authenticated())
+            .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
+            .build();
     }
 
     @Bean
     public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration authenticationConfiguration)
-            throws Exception {
+        AuthenticationConfiguration authenticationConfiguration)
+        throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 }

@@ -37,14 +37,14 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
         problemDetail.setType(URI.create("https://algatransito.com/erros/campos-invalidos"));
 
         var fields = ex.getBindingResult()
-                .getAllErrors()
-                .stream()
-                .collect(Collectors.toMap(
-                        objectError -> ((FieldError) objectError).getField(),
-                        objectError -> messageSource.getMessage(
-                                objectError,
-                                LocaleContextHolder.getLocale()
-                        )));
+            .getAllErrors()
+            .stream()
+            .collect(Collectors.toMap(
+                objectError -> ((FieldError) objectError).getField(),
+                objectError -> messageSource.getMessage(
+                    objectError,
+                    LocaleContextHolder.getLocale()
+                )));
 
         problemDetail.setProperty("fields", fields);
 
@@ -130,7 +130,7 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         problemDetail.setTitle(exception.getMessage());
         problemDetail.setDetail("For some unknown reason the email could not be sent," +
-                " problem happened on method sendEmail inside EmailSenderService");
+            " problem happened on method sendEmail inside EmailSenderService");
         problemDetail.setType(URI.create("https://login-server.com/error/email-not-sent"));
         return problemDetail;
     }

@@ -68,8 +68,8 @@ public class UserAuthService {
     public Login login(LoginInput data) {
         String token;
         User user = userRepository
-                .findByUsernameOrEmail(data.login(), data.login())
-                .orElseThrow(() -> new UsernameNotFoundException("User Doesn't exist"));
+            .findByUsernameOrEmail(data.login(), data.login())
+            .orElseThrow(() -> new UsernameNotFoundException("User Doesn't exist"));
 
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.login(), data.password());
         var auth = this.authenticationManager.authenticate(usernamePassword);
@@ -99,8 +99,8 @@ public class UserAuthService {
     @Transactional
     public Login confirm(String username, String token) {
         User user = userRepository
-                .findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User Doesn't exist"));
+            .findByUsername(username)
+            .orElseThrow(() -> new UsernameNotFoundException("User Doesn't exist"));
 
         user.setEnabled(true);
         user.setLocked(true);
@@ -121,9 +121,9 @@ public class UserAuthService {
 
         //Sending Confirmation Email
         String body = "http://localhost:8080/api/v1/auth/register/confirm?username="
-                + user.getUsername()
-                + "&token="
-                + token;
+            + user.getUsername()
+            + "&token="
+            + token;
 
         emailSenderService.sendEmail(user.getEmail(), "Confirm your email", body);
     }
@@ -137,8 +137,8 @@ public class UserAuthService {
     @Transactional
     public void changePassword(String email, String newPassword) {
         User user = userRepository
-                .findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User Doesn't exist"));
+            .findByEmail(email)
+            .orElseThrow(() -> new UsernameNotFoundException("User Doesn't exist"));
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(newPassword);
         user.setPassword(encryptedPassword);

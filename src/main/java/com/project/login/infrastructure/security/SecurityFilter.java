@@ -34,15 +34,15 @@ public class SecurityFilter extends OncePerRequestFilter {
             String subject = tokenService.validateToken(token);
 
             UserDetails user =
-                    new UserDetail(
-                            userRepository.findById(subject)
-                                    .orElseThrow(() -> new UsernameNotFoundException("User Not Found")));
+                new UserDetail(
+                    userRepository.findById(subject)
+                        .orElseThrow(() -> new UsernameNotFoundException("User Not Found")));
 
             var authentication =
-                    new UsernamePasswordAuthenticationToken(
-                            user,
-                            null,
-                            user.getAuthorities());
+                new UsernamePasswordAuthenticationToken(
+                    user,
+                    null,
+                    user.getAuthorities());
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }

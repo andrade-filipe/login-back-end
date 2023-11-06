@@ -14,8 +14,8 @@ public record UserDetail(User user) implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (this.user.getUserRole() == UserRole.ADMIN) {
             return List.of(
-                    new SimpleGrantedAuthority("ROLE_ADMIN"),
-                    new SimpleGrantedAuthority("ROLE_USER")
+                new SimpleGrantedAuthority("ROLE_ADMIN"),
+                new SimpleGrantedAuthority("ROLE_USER")
             );
         } else return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }

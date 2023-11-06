@@ -1,0 +1,11 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf #padrão unix pra quebra de linha
+indent_size = 4 #espaço para identação (4 spaces)
+indent_style = space #estilo de identação
+insert_final_newline = true #se é pra ter uma ultima linha vazia no codigo
+max_line_length = 120 #tamanho máximo de caracteres por linha
+tab_width = 4 #quando usar TAB vai dar 4 espaços
+trim_trailing_whitespace = true #apaga espaços vazios depois do ";"
