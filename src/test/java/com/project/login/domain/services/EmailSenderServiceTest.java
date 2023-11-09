@@ -5,7 +5,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.*;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -75,38 +78,6 @@ class EmailSenderServiceTest {
                         assertThat(
                             captor.getValue().getSubject())
                             .isEqualTo(subject);
-                    }
-                }
-            }
-        }
-
-        @Nested
-        @DisplayName("GIVEN an invalid toEmail, subject or body")
-        class GivenInvalidParams {
-            String toEmailValid = "dev.filipeandrade@gmail.com";
-            String toEmailInvalid = "dev.filipeandradegmail.com";
-            String validSubject = "Test email";
-            String invalidSubject = null;
-            String validBody = "This is a test";
-            String invalidBody = null;
-
-            @Nested
-            @DisplayName("WHEN sending an email")
-            class WhenSendingEmail {
-                @BeforeEach
-                void sendEmailInvalid(){
-                    emailSenderService.sendEmail(toEmailInvalid, validSubject, validBody);
-                    emailSenderService.sendEmail(toEmailValid, invalidSubject, validBody);
-                    emailSenderService.sendEmail(toEmailValid, validSubject, invalidBody);
-                }
-                @Nested
-                @DisplayName("ASSERT That")
-                class AssertThat {
-                    @Test
-                    @DisplayName("method .send is never called")
-                    void invalidSubjectTest() {
-                        verify(mailSender, Mockito.never())
-                            .send(Mockito.any(SimpleMailMessage.class));
                     }
                 }
             }

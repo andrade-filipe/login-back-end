@@ -23,6 +23,7 @@ public class UserAuthService {
     private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
     private final EmailSenderService emailSenderService;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     /**
      * Responsible for saving all users inside the database.
@@ -42,7 +43,7 @@ public class UserAuthService {
         this.confirmationEmail(user);
 
         //Encrypting Password
-        String encryptedPassword = new BCryptPasswordEncoder().encode(user.getPassword());
+        String encryptedPassword = bCryptPasswordEncoder.encode(user.getPassword());
 
         if (user.getUsername().contains("ADMIN")) {
             user.setUserRole(UserRole.ADMIN);
@@ -97,7 +98,7 @@ public class UserAuthService {
      * @return Login information, front-end can instantly login after email confirmation
      */
     @Transactional
-    public Login confirm(String username, String token) {
+    public Login confirmEmail(String username, String token) {
         User user = userRepository
             .findByUsername(username)
             .orElseThrow(() -> new UsernameNotFoundException("User Doesn't exist"));
