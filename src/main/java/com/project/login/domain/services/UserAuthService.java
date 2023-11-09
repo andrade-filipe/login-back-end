@@ -24,7 +24,6 @@ public class UserAuthService {
     private final TokenService tokenService;
     private final EmailSenderService emailSenderService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken;
 
     /**
      * Responsible for saving all users inside the database.
