@@ -18,6 +18,7 @@ import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.OffsetDateTime;
@@ -46,7 +47,7 @@ class UserAuthServiceTest {
     @InjectMocks
     UserAuthService userAuthService;
     @Spy
-    UserBuilder validUser = builder().userId("uuid1").name("Filipe").username("filipe")
+    UserBuilder validUserBuilder = builder().userId("uuid1").name("Filipe").username("filipe")
         .email("filipeandrade@gmail.com").password("1234").gender(Gender.MALE)
         .birthDate(OffsetDateTime.now()).userRole(UserRole.USER).enabled(true).locked(true);
 
@@ -168,26 +169,29 @@ class UserAuthServiceTest {
     class LoginMethodTests {
         LoginInput validLoginInput = new LoginInput("filipe", "1234");
         LoginInput invalidLoginInput = new LoginInput("joão", "1234");
-        User userLogged = validUser.build();
+        User userLogged = validUserBuilder.build();
         @Mock
         Authentication auth;
-        @BeforeEach
-        void mockResponses() {
-            when(userRepository.findByUsernameOrEmail(eq("filipe"), eq("filipe")))
-                .thenReturn(Optional.of(userLogged));
 
-            when(authenticationManager.authenticate(any()))
-                .thenAnswer(invocationOnMock -> auth);
-
-            when(tokenService.generateToken(any())).thenReturn("token");
-
-            when(auth.isAuthenticated())
-                .thenReturn(true);
-        }
         @Nested
         @DisplayName("GIVEN VALID login information")
         class GivenValidLogin {
             Login validLoginReturn;
+
+            @BeforeEach
+            void mockResponses() {
+                when(userRepository.findByUsernameOrEmail(eq("filipe"), eq("filipe")))
+                    .thenReturn(Optional.of(userLogged));
+
+                when(authenticationManager.authenticate(any()))
+                    .thenAnswer(invocationOnMock -> auth);
+
+                when(tokenService.generateToken(any())).thenReturn("token");
+
+                when(auth.isAuthenticated())
+                    .thenReturn(true);
+            }
+
             @Nested
             @DisplayName("WHEN logging in")
             class WhenLoggingIn {
@@ -195,6 +199,7 @@ class UserAuthServiceTest {
                 void doLogin() {
                     validLoginReturn = userAuthService.login(validLoginInput);
                 }
+
                 @Nested
                 @DisplayName("ASSERT THAT")
                 class AssertThat {
@@ -242,28 +247,25 @@ class UserAuthServiceTest {
 
         @Nested
         @DisplayName("GIVEN Invalid login information")
-        class GivenInvalidLogin{
+        class GivenInvalidLogin {
             @Nested
             @DisplayName("When logging in")
-            class WhenLoggingIn{
+            class WhenLoggingIn {
+                @BeforeEach
+                void exception(){
+                    when(userRepository.findByUsernameOrEmail(any(), any()))
+                        .thenThrow(new UsernameNotFoundException("User Doesn't exist"));
+                }
                 @Nested
                 @DisplayName("ASSERT THAT")
-                class AssertThat{
-//                    @Test
-//                    @DisplayName("UserNotFoundException is being Thrown")
-//                    void exceptionIsBeingThrown(){
-//                        assertThatThrownBy(() -> userAuthService.login(invalidLoginInput))
-//                            .isInstanceOf(UsernameNotFoundException.class)
-//                            .hasMessage("User Doesn't exist");
-//                    }
-//
-//                    @Test
-//                    @DisplayName("not authenticated is being thrown")
-//                    void notAuth(){
-//                        assertThatThrownBy(() -> userAuthService.login(validLoginInput))
-//                            .isInstanceOf(RuntimeException.class)
-//                            .hasMessage("Is not authenticated");
-//                    }
+                class AssertThat {
+                    @Test
+                    @DisplayName("throws an exception if user wrong")
+                    void exceptionUser() {
+                        assertThatThrownBy(() -> userAuthService.login(invalidLoginInput))
+                            .isInstanceOf(UsernameNotFoundException.class)
+                            .hasMessage("User Doesn't exist");
+                    }
                 }
             }
         }
@@ -272,38 +274,113 @@ class UserAuthServiceTest {
     @Nested
     @DisplayName("Method: confirmEmail() -> @param String, String, @return Login")
     class ConfirmEmailMethodTests {
+
         @Nested
-        @DisplayName("GIVEN")
+        @DisplayName("GIVEN username and token")
         class Given {
+            User user = validUserBuilder.locked(false).enabled(false).build();
+            String username = user.getUsername();
+            String token = "token";
+            @BeforeEach
+            void mockResponses(){
+                when(userRepository.findByUsername(any(String.class)))
+                    .thenReturn(Optional.of(user));
+            }
             @Nested
-            @DisplayName("WHEN")
+            @DisplayName("WHEN confirming email")
             class When {
+                Login login;
+                @BeforeEach
+                void callMethod(){
+                    login = userAuthService.confirmEmail(username, token);
+                }
                 @Nested
                 @DisplayName("ASSERT THAT")
                 class Assert {
+                    @Test
+                    @DisplayName("Locked and Enabled states are being changed")
+                    void stateChanged(){
+                        assertThat(user.getLocked()).isEqualTo(true);
+                        assertThat(user.getEnabled()).isEqualTo(true);
+                    }
 
+                    @Test
+                    @DisplayName("its returning the right Login for the user")
+                    void rightLogin(){
+                        assertThat(login.getName()).isEqualTo("Filipe");
+                        assertThat(login.getRole()).isEqualTo(UserRole.USER);
+                        assertThat(login.getToken()).isEqualTo("token");
+                    }
+
+                    @Test
+                    @DisplayName("its returning an instance of login")
+                    void loginInstance(){
+                        assertThat(login).isInstanceOf(Login.class);
+                    }
+
+                    @Test
+                    @DisplayName("verify if its updating the user")
+                    void updating(){
+                        verify(userRepository, times(1))
+                            .save(any(User.class));
+                    }
                 }
             }
         }
-
     }
 
     @Nested
     @DisplayName("Method: changePassword() -> @param String, String")
     class ChangePasswordMethodTests {
+        User user = validUserBuilder.build();
+        String newPassword = "newPass";
         @Nested
-        @DisplayName("GIVEN")
+        @DisplayName("GIVEN valid user")
         class Given {
+            @BeforeEach
+            void mockResponses(){
+                when(userRepository.findByEmail(any(String.class)))
+                    .thenReturn(Optional.of(user));
+                when(bCryptPasswordEncoder.encode(any(String.class)))
+                    .thenReturn("encryptedPassword");
+            }
             @Nested
-            @DisplayName("WHEN")
+            @DisplayName("WHEN changing password")
             class When {
+                @BeforeEach
+                void callMethod(){
+                    userAuthService.changePassword(user.getEmail(), newPassword);
+                }
                 @Nested
                 @DisplayName("ASSERT THAT")
                 class Assert {
+                    @Test
+                    @DisplayName("Repository was called and found user")
+                    void repositoryCall(){
+                        verify(userRepository, times(1))
+                            .findByEmail(any(String.class));
+                    }
 
+                    @Test
+                    @DisplayName("BCrypt was called and encrypted password")
+                    void bcryptCall(){
+                        verify(bCryptPasswordEncoder, times(1))
+                            .encode(any(String.class));
+                        assertThat(user.getPassword()).isEqualTo("encryptedPassword");
+                    }
+
+                    @Test
+                    @DisplayName("Repository updated user")
+                    void repositoryUpdate(){
+                        verify(userRepository,times(1))
+                            .save(any(User.class));
+                    }
                 }
             }
         }
-
     }
 }
+
+
+
+

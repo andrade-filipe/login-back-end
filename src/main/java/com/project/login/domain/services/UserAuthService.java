@@ -84,11 +84,6 @@ public class UserAuthService {
         return new Login(user.getName(), user.getUserRole(), token);
     }
 
-    //    @Transactional
-    //    public Login loginOAuth(LoginInput data){
-    //        return new Login(null,null,null);
-    //  }
-
     /**
      * changes the state of the user(locked, enabled) confirming the email,
      * now the user can access the application
@@ -141,7 +136,7 @@ public class UserAuthService {
             .findByEmail(email)
             .orElseThrow(() -> new UsernameNotFoundException("User Doesn't exist"));
 
-        String encryptedPassword = new BCryptPasswordEncoder().encode(newPassword);
+        String encryptedPassword = bCryptPasswordEncoder.encode(newPassword);
         user.setPassword(encryptedPassword);
 
         userRepository.save(user);
