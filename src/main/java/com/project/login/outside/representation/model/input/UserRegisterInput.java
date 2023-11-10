@@ -1,6 +1,7 @@
 package com.project.login.outside.representation.model.input;
 
 import com.project.login.domain.entitys.enums.Gender;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -8,6 +9,8 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.OffsetDateTime;
+
+import static jakarta.persistence.EnumType.STRING;
 
 @Getter
 @Setter
@@ -33,7 +36,7 @@ public class UserRegisterInput {
     private String password;
 
     @NotNull
-    @Size(max = 24)
+    @Enumerated(STRING)
     private Gender gender;
 
     @NotNull

@@ -54,10 +54,4 @@ public class UserAuthController {
         );
         return ResponseEntity.ok("Password Changed");
     }
-
-    //    @PostMapping("/login/oauth2")
-    //    @ResponseStatus(OK)
-    //    public LoginResponse loginOAuth(@Valid @RequestBody LoginInput data){
-    //        return userLoginMapper.toResponse(userAuthService.loginOAuth(data));
-    //    }
 }
