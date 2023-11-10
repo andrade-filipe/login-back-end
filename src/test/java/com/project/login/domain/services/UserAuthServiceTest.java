@@ -252,10 +252,11 @@ class UserAuthServiceTest {
             @DisplayName("When logging in")
             class WhenLoggingIn {
                 @BeforeEach
-                void exception(){
+                void exception() {
                     when(userRepository.findByUsernameOrEmail(any(), any()))
                         .thenThrow(new UsernameNotFoundException("User Doesn't exist"));
                 }
+
                 @Nested
                 @DisplayName("ASSERT THAT")
                 class AssertThat {
@@ -281,32 +282,36 @@ class UserAuthServiceTest {
             User user = validUserBuilder.locked(false).enabled(false).build();
             String username = user.getUsername();
             String token = "token";
+
             @BeforeEach
-            void mockResponses(){
+            void mockResponses() {
                 when(userRepository.findByUsername(any(String.class)))
                     .thenReturn(Optional.of(user));
             }
+
             @Nested
             @DisplayName("WHEN confirming email")
             class When {
                 Login login;
+
                 @BeforeEach
-                void callMethod(){
+                void callMethod() {
                     login = userAuthService.confirmEmail(username, token);
                 }
+
                 @Nested
                 @DisplayName("ASSERT THAT")
                 class Assert {
                     @Test
                     @DisplayName("Locked and Enabled states are being changed")
-                    void stateChanged(){
+                    void stateChanged() {
                         assertThat(user.getLocked()).isEqualTo(true);
                         assertThat(user.getEnabled()).isEqualTo(true);
                     }
 
                     @Test
                     @DisplayName("its returning the right Login for the user")
-                    void rightLogin(){
+                    void rightLogin() {
                         assertThat(login.getName()).isEqualTo("Filipe");
                         assertThat(login.getRole()).isEqualTo(UserRole.USER);
                         assertThat(login.getToken()).isEqualTo("token");
@@ -314,13 +319,13 @@ class UserAuthServiceTest {
 
                     @Test
                     @DisplayName("its returning an instance of login")
-                    void loginInstance(){
+                    void loginInstance() {
                         assertThat(login).isInstanceOf(Login.class);
                     }
 
                     @Test
                     @DisplayName("verify if its updating the user")
-                    void updating(){
+                    void updating() {
                         verify(userRepository, times(1))
                             .save(any(User.class));
                     }
@@ -334,36 +339,39 @@ class UserAuthServiceTest {
     class ChangePasswordMethodTests {
         User user = validUserBuilder.build();
         String newPassword = "newPass";
+
         @Nested
         @DisplayName("GIVEN valid user")
         class Given {
             @BeforeEach
-            void mockResponses(){
+            void mockResponses() {
                 when(userRepository.findByEmail(any(String.class)))
                     .thenReturn(Optional.of(user));
                 when(bCryptPasswordEncoder.encode(any(String.class)))
                     .thenReturn("encryptedPassword");
             }
+
             @Nested
             @DisplayName("WHEN changing password")
             class When {
                 @BeforeEach
-                void callMethod(){
+                void callMethod() {
                     userAuthService.changePassword(user.getEmail(), newPassword);
                 }
+
                 @Nested
                 @DisplayName("ASSERT THAT")
                 class Assert {
                     @Test
                     @DisplayName("Repository was called and found user")
-                    void repositoryCall(){
+                    void repositoryCall() {
                         verify(userRepository, times(1))
                             .findByEmail(any(String.class));
                     }
 
                     @Test
                     @DisplayName("BCrypt was called and encrypted password")
-                    void bcryptCall(){
+                    void bcryptCall() {
                         verify(bCryptPasswordEncoder, times(1))
                             .encode(any(String.class));
                         assertThat(user.getPassword()).isEqualTo("encryptedPassword");
@@ -371,8 +379,8 @@ class UserAuthServiceTest {
 
                     @Test
                     @DisplayName("Repository updated user")
-                    void repositoryUpdate(){
-                        verify(userRepository,times(1))
+                    void repositoryUpdate() {
+                        verify(userRepository, times(1))
                             .save(any(User.class));
                     }
                 }

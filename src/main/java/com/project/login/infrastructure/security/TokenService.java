@@ -1,6 +1,5 @@
 package com.project.login.infrastructure.security;
 
-import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
@@ -12,6 +11,10 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
+import static com.auth0.jwt.JWT.create;
+import static com.auth0.jwt.JWT.require;
+import static com.auth0.jwt.algorithms.Algorithm.HMAC256;
+
 @Service
 public class TokenService {
     @Value("${api.security.token.secret}")
@@ -19,13 +22,12 @@ public class TokenService {
 
     public String generateToken(User user) {
         try {
-            Algorithm algorithm = Algorithm.HMAC256(secret);
-            String token = JWT.create()
+            Algorithm algorithm = HMAC256(secret);
+            return create()
                 .withIssuer("login-server")
                 .withSubject(user.getUserId())
                 .withExpiresAt(generateExpirationDate())
                 .sign(algorithm);
-            return token;
         } catch (JWTCreationException exception) {
             throw new JWTCreationException("Error while generating token", exception);
         }
@@ -33,8 +35,8 @@ public class TokenService {
 
     public String validateToken(String token) {
         try {
-            Algorithm algorithm = Algorithm.HMAC256(secret);
-            return JWT.require(algorithm)
+            Algorithm algorithm = HMAC256(secret);
+            return require(algorithm)
                 .withIssuer("login-server")
                 .build()
                 .verify(token)
