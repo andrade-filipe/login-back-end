@@ -23,10 +23,11 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 public class WebSecurityConfig {
 
     private final SecurityFilter securityFilter;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return bCryptPasswordEncoder;
     }
 
     @Bean
