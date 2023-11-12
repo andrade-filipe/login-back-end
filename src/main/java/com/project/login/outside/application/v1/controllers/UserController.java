@@ -1,16 +1,20 @@
 package com.project.login.outside.application.v1.controllers;
 
+import com.project.login.domain.repositorys.UserRepository;
+import com.project.login.outside.representation.mapper.UserInformationMapper;
+import com.project.login.outside.representation.model.response.UserInformationResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/home")
+@RequiredArgsConstructor
 @CrossOrigin("*")
 @SecurityRequirement(name = "bearerAuth")
 public class UserController {
+    private final UserRepository userRepository;
+    private final UserInformationMapper userInformationMapper;
 
     @GetMapping
     public String home() {
@@ -27,4 +31,8 @@ public class UserController {
         return "Hello, Admin!";
     }
 
+    @GetMapping("/information")
+    public UserInformationResponse userInformation(@RequestParam("username") String username){
+        return userInformationMapper.toResponse(userRepository.findByUsername(username));
+    }
 }

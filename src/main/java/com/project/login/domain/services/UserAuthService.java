@@ -23,7 +23,6 @@ public class UserAuthService {
     private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
     private final EmailSenderService emailSenderService;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     /**
      * Responsible for saving all users inside the database.
@@ -43,7 +42,7 @@ public class UserAuthService {
         this.confirmationEmail(user);
 
         //Encrypting Password
-        String encryptedPassword = bCryptPasswordEncoder.encode(user.getPassword());
+        String encryptedPassword = new BCryptPasswordEncoder().encode(user.getPassword());
 
         if (user.getUsername().contains("ADMIN")) {
             user.setUserRole(UserRole.ADMIN);
@@ -81,7 +80,7 @@ public class UserAuthService {
             throw new RuntimeException("Is not authenticated");
         }
 
-        return new Login(user.getName(), user.getUserRole(), token);
+        return new Login(user.getName(),user.getUsername(), user.getUserRole(), token);
     }
 
     /**
@@ -103,7 +102,7 @@ public class UserAuthService {
 
         userRepository.save(user);
 
-        return new Login(user.getName(), user.getUserRole(), token);
+        return new Login(user.getName(), user.getUsername(), user.getUserRole(), token);
     }
 
     /**
@@ -136,7 +135,7 @@ public class UserAuthService {
             .findByEmail(email)
             .orElseThrow(() -> new UsernameNotFoundException("User Doesn't exist"));
 
-        String encryptedPassword = bCryptPasswordEncoder.encode(newPassword);
+        String encryptedPassword = new BCryptPasswordEncoder().encode(newPassword);
         user.setPassword(encryptedPassword);
 
         userRepository.save(user);
