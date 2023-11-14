@@ -37,7 +37,7 @@ public class UserAuthService {
         if (user == null) {
             throw new UserAuthServiceException("User is Empty");
         }
-        try{
+        try {
             //Encrypting Password
             String encryptedPassword = new BCryptPasswordEncoder().encode(user.getPassword());
 
@@ -56,7 +56,7 @@ public class UserAuthService {
             //Sends the confirmation Email
             this.sendConfirmationEmail(user);
 
-        } catch (UserAuthServiceException exception){
+        } catch (UserAuthServiceException exception) {
             throw new UserAuthServiceException("Something went wrong while registering user");
         }
     }
@@ -84,7 +84,7 @@ public class UserAuthService {
             throw new RuntimeException("Is not authenticated");
         }
 
-        return new Login(user.getName(),user.getUsername(), user.getUserRole(), token);
+        return new Login(user.getName(), user.getUsername(), user.getUserRole(), token);
     }
 
     /**
@@ -92,11 +92,10 @@ public class UserAuthService {
      * now the user can access the application
      *
      * @param username identifier
-     * @param token    to access the application
      * @return Login information, front-end can instantly login after email confirmation
      */
     @Transactional
-    public Login confirmEmail(String username, String token) {
+    public Login confirmEmail(String username) {
         User user = userRepository
             .findByUsername(username)
             .orElseThrow(() -> new UsernameNotFoundException("User Doesn't exist"));
@@ -105,6 +104,8 @@ public class UserAuthService {
         user.setLocked(true);
 
         userRepository.save(user);
+
+        String token = tokenService.generateToken(user);
 
         return new Login(user.getName(), user.getUsername(), user.getUserRole(), token);
     }
@@ -115,14 +116,14 @@ public class UserAuthService {
      * @param user identifier
      */
     private void sendConfirmationEmail(User user) {
-        //Generating Token
-        String token = tokenService.generateToken(user);
-
-        //Sending Confirmation Email
-        String body = "http://localhost:8080/api/v1/auth/register/confirm?username="
-            + user.getUsername()
-            + "&token="
-            + token;
+        String link = "http://localhost:4200/register/confirm/" + user.getUsername();
+        String body =
+            "<html>\n" +
+                "<body>\n" +
+                "    <p>Click the button below to confirm your registration:</p>\n" +
+                "    <a href=" + link + " style=\"background-color: #4CAF50; border: none; color: white; padding: 15px 32px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer;\">Confirm Registration</a>\n" +
+                "</body>\n" +
+                "</html>";
 
         emailSenderService.sendEmail(user.getEmail(), "Confirm your email", body);
     }

@@ -259,7 +259,6 @@ class UserAuthServiceTest {
         class Given {
             User user = validUserBuilder.locked(false).enabled(false).build();
             String username = user.getUsername();
-            String token = "token";
 
             @BeforeEach
             void mockResponses() {
@@ -274,7 +273,7 @@ class UserAuthServiceTest {
 
                 @BeforeEach
                 void callMethod() {
-                    login = userAuthService.confirmEmail(username, token);
+                    login = userAuthService.confirmEmail(username);
                 }
 
                 @Nested
@@ -292,7 +291,6 @@ class UserAuthServiceTest {
                     void rightLogin() {
                         assertThat(login.getName()).isEqualTo("Filipe");
                         assertThat(login.getRole()).isEqualTo(UserRole.USER);
-                        assertThat(login.getToken()).isEqualTo("token");
                     }
 
                     @Test

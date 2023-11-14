@@ -40,9 +40,8 @@ public class UserAuthController {
 
     @GetMapping("/register/confirm")
     @ResponseStatus(OK)
-    public LoginResponse confirm(@RequestParam("username") String username,
-                                 @RequestParam("token") String token) {
-        return userLoginMapper.toResponse(userAuthService.confirmEmail(username, token));
+    public LoginResponse confirm(@RequestParam("username") String username) {
+        return userLoginMapper.toResponse(userAuthService.confirmEmail(username));
     }
 
     @PostMapping("/change-password")
