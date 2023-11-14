@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/home")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 @SecurityRequirement(name = "bearerAuth")
 public class UserController {
     private final UserRepository userRepository;
