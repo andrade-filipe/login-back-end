@@ -37,24 +37,28 @@ public class UserAuthService {
         if (user == null) {
             throw new UserAuthServiceException("User is Empty");
         }
+        try{
+            //Encrypting Password
+            String encryptedPassword = new BCryptPasswordEncoder().encode(user.getPassword());
 
-        //Sends the confirmation Email
-        this.confirmationEmail(user);
+            if (user.getUsername().contains("ADMIN")) {
+                user.setUserRole(UserRole.ADMIN);
+            } else {
+                user.setUserRole(UserRole.USER);
+            }
 
-        //Encrypting Password
-        String encryptedPassword = new BCryptPasswordEncoder().encode(user.getPassword());
+            user.setLocked(false);
+            user.setEnabled(false);
+            user.setPassword(encryptedPassword);
 
-        if (user.getUsername().contains("ADMIN")) {
-            user.setUserRole(UserRole.ADMIN);
-        } else {
-            user.setUserRole(UserRole.USER);
+            userRepository.save(user);
+
+            //Sends the confirmation Email
+            this.confirmationEmail(user);
+
+        } catch (UserAuthServiceException exception){
+            throw new UserAuthServiceException("Something went wrong while registering user");
         }
-
-        user.setLocked(false);
-        user.setEnabled(false);
-        user.setPassword(encryptedPassword);
-
-        userRepository.save(user);
     }
 
     /**
