@@ -65,7 +65,7 @@ public class UserAuthService {
      * Responsible for authenticating every user that wants to login
      * and do requests to my application
      *
-     * @param data of a logged user
+     * @param data of a user trying to login
      * @return Login information(token, role, name)
      */
     @Transactional
