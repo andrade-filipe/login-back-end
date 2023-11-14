@@ -54,7 +54,7 @@ public class UserAuthService {
             userRepository.save(user);
 
             //Sends the confirmation Email
-            this.confirmationEmail(user);
+            this.sendConfirmationEmail(user);
 
         } catch (UserAuthServiceException exception){
             throw new UserAuthServiceException("Something went wrong while registering user");
@@ -114,7 +114,7 @@ public class UserAuthService {
      *
      * @param user identifier
      */
-    private void confirmationEmail(User user) {
+    private void sendConfirmationEmail(User user) {
         //Generating Token
         String token = tokenService.generateToken(user);
 

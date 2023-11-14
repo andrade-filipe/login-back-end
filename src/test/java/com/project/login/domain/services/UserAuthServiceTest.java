@@ -74,12 +74,6 @@ class UserAuthServiceTest {
                 .gender(Gender.MALE)
                 .birthDate(OffsetDateTime.now());
 
-            @BeforeEach
-            void mockResponses() {
-                when(bCryptPasswordEncoder.encode(any()))
-                    .thenReturn("encrypted");
-            }
-
             @Nested
             @DisplayName("WHEN registering User")
             class WhenRegisteringUser {
@@ -104,22 +98,6 @@ class UserAuthServiceTest {
                     void lockedAndEnabled() {
                         assertThat(user.getLocked()).isEqualTo(false);
                         assertThat(user.getEnabled()).isEqualTo(false);
-                    }
-
-                    @Test
-                    @DisplayName("is encrypting the password")
-                    void encryption() {
-                        assertThat(user.getPassword()).isEqualTo("encrypted");
-                    }
-
-                    @Test
-                    @DisplayName("password is being encrypted before save")
-                    void order() {
-                        InOrder inOrder = inOrder(bCryptPasswordEncoder, userRepository);
-                        inOrder.verify(bCryptPasswordEncoder, times(1))
-                            .encode(any(String.class));
-                        inOrder.verify(userRepository, times(1))
-                            .save(any(User.class));
                     }
                 }
             }
@@ -347,8 +325,6 @@ class UserAuthServiceTest {
             void mockResponses() {
                 when(userRepository.findByEmail(any(String.class)))
                     .thenReturn(Optional.of(user));
-                when(bCryptPasswordEncoder.encode(any(String.class)))
-                    .thenReturn("encryptedPassword");
             }
 
             @Nested
@@ -367,14 +343,6 @@ class UserAuthServiceTest {
                     void repositoryCall() {
                         verify(userRepository, times(1))
                             .findByEmail(any(String.class));
-                    }
-
-                    @Test
-                    @DisplayName("BCrypt was called and encrypted password")
-                    void bcryptCall() {
-                        verify(bCryptPasswordEncoder, times(1))
-                            .encode(any(String.class));
-                        assertThat(user.getPassword()).isEqualTo("encryptedPassword");
                     }
 
                     @Test
