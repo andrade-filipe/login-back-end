@@ -2,9 +2,11 @@ package com.project.login.domain.services;
 
 import com.project.login.domain.entitys.email.EmailSender;
 import com.project.login.domain.exceptions.EmailServiceException;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,16 +19,15 @@ public class EmailSenderService implements EmailSender {
     public void sendEmail(String toEmail, String subject,
                           String body) throws EmailServiceException {
         try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom("filipeandrade.work@gmail.com");
-            message.setTo(toEmail);
-            message.setSubject(subject);
-            message.setText(body);
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setFrom("filipeandrade.work@gmail.com");
+            helper.setTo(toEmail);
+            helper.setSubject(subject);
+            helper.setText(body, true);
             mailSender.send(message);
-        } catch (EmailServiceException exception) {
+        } catch (EmailServiceException | MessagingException exception) {
             throw new EmailServiceException("Couldn't send the email");
         }
-
     }
-
 }
