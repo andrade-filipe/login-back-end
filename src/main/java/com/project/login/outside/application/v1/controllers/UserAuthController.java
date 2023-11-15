@@ -5,6 +5,7 @@ import com.project.login.domain.services.UserAuthService;
 import com.project.login.outside.representation.mapper.UserLoginMapper;
 import com.project.login.outside.representation.mapper.UserRegisterMapper;
 import com.project.login.outside.representation.model.input.ChangePasswordInput;
+import com.project.login.outside.representation.model.input.ForgotPasswordInput;
 import com.project.login.outside.representation.model.input.LoginInput;
 import com.project.login.outside.representation.model.input.UserRegisterInput;
 import com.project.login.outside.representation.model.response.LoginResponse;
@@ -42,6 +43,12 @@ public class UserAuthController {
     @ResponseStatus(OK)
     public LoginResponse confirm(@RequestParam("username") String username) {
         return userLoginMapper.toResponse(userAuthService.confirmEmail(username));
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity forgotPassword(@Valid @RequestBody ForgotPasswordInput forgotPassword){
+        userAuthService.forgotPassword(forgotPassword);
+        return ResponseEntity.ok("Check Your Email");
     }
 
     @PostMapping("/change-password")

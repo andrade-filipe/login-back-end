@@ -6,6 +6,7 @@ import com.project.login.domain.entitys.user.User;
 import com.project.login.domain.exceptions.UserAuthServiceException;
 import com.project.login.domain.repositorys.UserRepository;
 import com.project.login.infrastructure.security.TokenService;
+import com.project.login.outside.representation.model.input.ForgotPasswordInput;
 import com.project.login.outside.representation.model.input.LoginInput;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -111,6 +112,50 @@ public class UserAuthService {
     }
 
     /**
+     * Password change method updated the user's new password
+     *
+     * @param email       to identify
+     * @param newPassword change the old to this new password
+     */
+    @Transactional
+    public void changePassword(String email, String newPassword) {
+        User user = userRepository
+            .findByEmail(email)
+            .orElseThrow(() -> new UsernameNotFoundException("User Doesn't exist"));
+
+        String encryptedPassword = new BCryptPasswordEncoder().encode(newPassword);
+        user.setPassword(encryptedPassword);
+
+        userRepository.save(user);
+    }
+
+    public void forgotPassword(ForgotPasswordInput forgotPassword){
+        User user = userRepository
+            .findByEmail(forgotPassword.getEmail())
+            .orElseThrow(() -> new UsernameNotFoundException("User Doesn't Exist"));
+
+        sendForgotPasswordEmail(user);
+    }
+
+    /**
+     * Sends a change password email using EmailSenderService
+     *
+     * @param user identifier
+     */
+    private void sendForgotPasswordEmail(User user) {
+        String link = "http://localhost:4200/change-password/" + user.getUsername();
+        String body =
+            "<html>\n" +
+                "<body>\n" +
+                "    <p>Click the button below to change your password</p>\n" +
+                "    <a href=\"" + link + "\" style=\"background-color: #4CAF50; border: none; color: white; padding: 15px 32px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer;\">Change Password</a>\n" +
+                "</body>\n" +
+                "</html>";
+
+        emailSenderService.sendEmail(user.getEmail(), "Change Your Password", body);
+    }
+
+    /**
      * Sends a confirmation email using EmailSenderService
      *
      * @param user identifier
@@ -128,21 +173,5 @@ public class UserAuthService {
         emailSenderService.sendEmail(user.getEmail(), "Confirm your email", body);
     }
 
-    /**
-     * Password change method updated the user's new password
-     *
-     * @param email       to identify
-     * @param newPassword change the old to this new password
-     */
-    @Transactional
-    public void changePassword(String email, String newPassword) {
-        User user = userRepository
-            .findByEmail(email)
-            .orElseThrow(() -> new UsernameNotFoundException("User Doesn't exist"));
 
-        String encryptedPassword = new BCryptPasswordEncoder().encode(newPassword);
-        user.setPassword(encryptedPassword);
-
-        userRepository.save(user);
-    }
 }
