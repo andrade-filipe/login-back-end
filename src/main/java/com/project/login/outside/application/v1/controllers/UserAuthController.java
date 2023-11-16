@@ -54,7 +54,7 @@ public class UserAuthController {
     @ResponseStatus(OK)
     public void changePassword(@Valid @RequestBody ChangePasswordInput changePasswordInput) {
         userAuthService.changePassword(
-            changePasswordInput.getEmail(),
+            changePasswordInput.getUsername(),
             changePasswordInput.getNewPassword()
         );
     }

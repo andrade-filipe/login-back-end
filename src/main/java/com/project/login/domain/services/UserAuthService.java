@@ -114,13 +114,13 @@ public class UserAuthService {
     /**
      * Password change method updated the user's new password
      *
-     * @param email       to identify
+     * @param username      to identify
      * @param newPassword change the old to this new password
      */
     @Transactional
-    public void changePassword(String email, String newPassword) {
+    public void changePassword(String username, String newPassword) {
         User user = userRepository
-            .findByEmail(email)
+            .findByUsername(username)
             .orElseThrow(() -> new UsernameNotFoundException("User Doesn't exist"));
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(newPassword);
