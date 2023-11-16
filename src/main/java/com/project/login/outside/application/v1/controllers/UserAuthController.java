@@ -11,7 +11,6 @@ import com.project.login.outside.representation.model.input.UserRegisterInput;
 import com.project.login.outside.representation.model.response.LoginResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.HttpStatus.CREATED;
@@ -46,17 +45,17 @@ public class UserAuthController {
     }
 
     @PostMapping("/forgot-password")
-    public ResponseEntity forgotPassword(@Valid @RequestBody ForgotPasswordInput forgotPassword){
+    @ResponseStatus(OK)
+    public void forgotPassword(@Valid @RequestBody ForgotPasswordInput forgotPassword){
         userAuthService.forgotPassword(forgotPassword);
-        return ResponseEntity.ok("Check Your Email");
     }
 
     @PostMapping("/change-password")
-    public ResponseEntity changePassword(@Valid @RequestBody ChangePasswordInput changePasswordInput) {
+    @ResponseStatus(OK)
+    public void changePassword(@Valid @RequestBody ChangePasswordInput changePasswordInput) {
         userAuthService.changePassword(
             changePasswordInput.getEmail(),
             changePasswordInput.getNewPassword()
         );
-        return ResponseEntity.ok("Password Changed");
     }
 }
