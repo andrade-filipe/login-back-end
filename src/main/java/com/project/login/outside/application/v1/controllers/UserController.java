@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Objects;
+
 @RestController
 @RequestMapping("/api/v1/home")
 @RequiredArgsConstructor
@@ -14,24 +16,16 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserRepository userRepository;
     private final UserInformationMapper userInformationMapper;
-
-    @GetMapping
-    public String home() {
-        return "Home";
-    }
-
     @GetMapping("/user")
     public String user() {
         return "Hello, User!";
     }
-
     @GetMapping("/admin")
     public String admin() {
         return "Hello, Admin!";
     }
-
     @GetMapping("/information")
     public UserInformationResponse userInformation(@RequestParam("username") String username){
-        return userInformationMapper.toResponse(userRepository.findByUsername(username));
+        return userInformationMapper.toResponse(Objects.requireNonNull(userRepository.findByUsername(username)));
     }
 }
