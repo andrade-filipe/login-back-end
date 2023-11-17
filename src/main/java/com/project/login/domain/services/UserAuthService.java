@@ -39,7 +39,6 @@ public class UserAuthService {
         if (user == null) {
             throw new UserAuthServiceException("User is Empty");
         }
-        //TODO: Concertar bug que manda o email para o usuário mesmo dando conflito no banco de dados
         try {
             saveToTheDatabase(user);
             this.sendConfirmationEmail(user);
