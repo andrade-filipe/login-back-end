@@ -34,7 +34,7 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
                                                                   WebRequest request) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(status);
         problemDetail.setTitle("Um ou mais campos inválidos");
-        problemDetail.setType(URI.create("https://algatransito.com/erros/campos-invalidos"));
+        problemDetail.setType(URI.create("https://login-server.com/erros/campos-invalidos"));
 
         var fields = ex.getBindingResult()
             .getAllErrors()

@@ -9,6 +9,7 @@ import com.project.login.infrastructure.security.TokenService;
 import com.project.login.outside.representation.model.input.ForgotPasswordInput;
 import com.project.login.outside.representation.model.input.LoginInput;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -38,27 +39,12 @@ public class UserAuthService {
         if (user == null) {
             throw new UserAuthServiceException("User is Empty");
         }
+        //TODO: Concertar bug que manda o email para o usuário mesmo dando conflito no banco de dados
         try {
-            //Encrypting Password
-            String encryptedPassword = new BCryptPasswordEncoder().encode(user.getPassword());
-
-            if (user.getUsername().contains("ADMIN")) {
-                user.setUserRole(UserRole.ADMIN);
-            } else {
-                user.setUserRole(UserRole.USER);
-            }
-
-            user.setLocked(false);
-            user.setEnabled(false);
-            user.setPassword(encryptedPassword);
-
-            userRepository.save(user);
-
-            //Sends the confirmation Email
+            saveToTheDatabase(user);
             this.sendConfirmationEmail(user);
-
-        } catch (UserAuthServiceException exception) {
-            throw new UserAuthServiceException("Something went wrong while registering user");
+        } catch (DataIntegrityViolationException exception) {
+            throw new DataIntegrityViolationException(exception.getMessage());
         }
     }
 
@@ -97,18 +83,13 @@ public class UserAuthService {
      */
     @Transactional
     public Login confirmEmail(String username) {
-        User user = userRepository
-            .findByUsername(username)
-            .orElseThrow(() -> new UsernameNotFoundException("User Doesn't exist"));
-
-        user.setEnabled(true);
-        user.setLocked(true);
-
-        userRepository.save(user);
-
-        String token = tokenService.generateToken(user);
-
-        return new Login(user.getName(), user.getUsername(), user.getUserRole(), token);
+        try{
+            User user = changeEnabledAndLockedState(username);
+            String token = tokenService.generateToken(user);
+            return new Login(user.getName(), user.getUsername(), user.getUserRole(), token);
+        } catch (DataIntegrityViolationException exception){
+            throw new DataIntegrityViolationException("User Already Exists");
+        }
     }
 
     /**
@@ -173,5 +154,38 @@ public class UserAuthService {
         emailSenderService.sendEmail(user.getEmail(), "Confirm your email", body);
     }
 
+    private void saveToTheDatabase(User user) throws UserAuthServiceException {
+        try{
+            String encryptedPassword = new BCryptPasswordEncoder().encode(user.getPassword());
 
+            if (user.getUsername().contains("ADMIN")) {
+                user.setUserRole(UserRole.ADMIN);
+            } else {
+                user.setUserRole(UserRole.USER);
+            }
+
+            user.setLocked(false);
+            user.setEnabled(false);
+            user.setPassword(encryptedPassword);
+
+            userRepository.saveAndFlush(user);
+        }catch (DataIntegrityViolationException exception){
+            throw new DataIntegrityViolationException("User Already Exists");
+        }
+    }
+
+    private User changeEnabledAndLockedState(String username){
+        try{
+            User user = userRepository
+                .findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User Doesn't exist"));
+
+            user.setEnabled(true);
+            user.setLocked(true);
+
+            return userRepository.saveAndFlush(user);
+        }catch (DataIntegrityViolationException exception){
+            throw new DataIntegrityViolationException("User Already in Use");
+        }
+    }
 }
