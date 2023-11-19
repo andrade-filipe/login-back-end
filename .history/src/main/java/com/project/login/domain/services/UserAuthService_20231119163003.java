@@ -9,6 +9,7 @@ import com.project.login.infrastructure.security.TokenService;
 import com.project.login.outside.representation.model.input.ForgotPasswordInput;
 import com.project.login.outside.representation.model.input.LoginInput;
 
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;

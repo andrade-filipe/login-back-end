@@ -8,7 +8,6 @@ import com.project.login.domain.repositorys.UserRepository;
 import com.project.login.infrastructure.security.TokenService;
 import com.project.login.outside.representation.model.input.ForgotPasswordInput;
 import com.project.login.outside.representation.model.input.LoginInput;
-
 import lombok.AllArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @AllArgsConstructor
-@Transactional
 public class UserAuthService {
 
     private final UserRepository userRepository;
@@ -111,7 +109,6 @@ public class UserAuthService {
         userRepository.save(user);
     }
 
-    @Transactional
     public void forgotPassword(ForgotPasswordInput forgotPassword){
         User user = userRepository
             .findByEmail(forgotPassword.getEmail())
@@ -125,7 +122,6 @@ public class UserAuthService {
      *
      * @param user identifier
      */
-    @Transactional
     private void sendForgotPasswordEmail(User user) {
         String link = "http://localhost:4200/change-password/" + user.getUsername();
         String body =
@@ -144,7 +140,6 @@ public class UserAuthService {
      *
      * @param user identifier
      */
-    @Transactional
     private void sendConfirmationEmail(User user) {
         String link = "http://localhost:4200/register/confirm/" + user.getUsername();
         String body =
@@ -158,7 +153,6 @@ public class UserAuthService {
         emailSenderService.sendEmail(user.getEmail(), "Confirm your email", body);
     }
 
-    @Transactional
     private void saveToTheDatabase(User user) throws UserAuthServiceException {
         try{
             String encryptedPassword = new BCryptPasswordEncoder().encode(user.getPassword());
@@ -179,7 +173,6 @@ public class UserAuthService {
         }
     }
 
-    @Transactional
     public User changeEnabledAndLockedState(String username){
         try{
             User user = userRepository
