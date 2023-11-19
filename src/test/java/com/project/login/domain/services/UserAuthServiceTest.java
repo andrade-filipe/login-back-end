@@ -32,18 +32,12 @@ import static org.mockito.Mockito.*;
 @DisplayName("UserAuthService Tests")
 @ExtendWith(MockitoExtension.class)
 class UserAuthServiceTest {
-    @Captor
-    ArgumentCaptor<User> userCaptor;
     @Mock
     UserRepository userRepository;
     @Mock
     AuthenticationManager authenticationManager;
     @Mock
     TokenService tokenService;
-    @Mock
-    EmailSenderService emailSenderService;
-    @Mock
-    BCryptPasswordEncoder bCryptPasswordEncoder;
     @InjectMocks
     UserAuthService userAuthService;
     @Spy
@@ -251,66 +245,6 @@ class UserAuthServiceTest {
     }
 
     @Nested
-    @DisplayName("Method: confirmEmail() -> @param String, String, @return Login")
-    class ConfirmEmailMethodTests {
-
-        @Nested
-        @DisplayName("GIVEN username and token")
-        class Given {
-            User user = validUserBuilder.locked(false).enabled(false).build();
-            String username = user.getUsername();
-
-            @BeforeEach
-            void mockResponses() {
-                when(userRepository.findByUsername(any(String.class)))
-                    .thenReturn(Optional.of(user));
-            }
-
-            @Nested
-            @DisplayName("WHEN confirming email")
-            class When {
-                Login login;
-
-                @BeforeEach
-                void callMethod() {
-                    login = userAuthService.confirmEmail(username);
-                }
-
-                @Nested
-                @DisplayName("ASSERT THAT")
-                class Assert {
-                    @Test
-                    @DisplayName("Locked and Enabled states are being changed")
-                    void stateChanged() {
-                        assertThat(user.getLocked()).isEqualTo(true);
-                        assertThat(user.getEnabled()).isEqualTo(true);
-                    }
-
-                    @Test
-                    @DisplayName("its returning the right Login for the user")
-                    void rightLogin() {
-                        assertThat(login.getName()).isEqualTo("Filipe");
-                        assertThat(login.getRole()).isEqualTo(UserRole.USER);
-                    }
-
-                    @Test
-                    @DisplayName("its returning an instance of login")
-                    void loginInstance() {
-                        assertThat(login).isInstanceOf(Login.class);
-                    }
-
-                    @Test
-                    @DisplayName("verify if its updating the user")
-                    void updating() {
-                        verify(userRepository, times(1))
-                            .save(any(User.class));
-                    }
-                }
-            }
-        }
-    }
-
-    @Nested
     @DisplayName("Method: changePassword() -> @param String, String")
     class ChangePasswordMethodTests {
         User user = validUserBuilder.build();
@@ -321,7 +255,7 @@ class UserAuthServiceTest {
         class Given {
             @BeforeEach
             void mockResponses() {
-                when(userRepository.findByEmail(any(String.class)))
+                when(userRepository.findByUsername(any(String.class)))
                     .thenReturn(Optional.of(user));
             }
 
@@ -330,7 +264,7 @@ class UserAuthServiceTest {
             class When {
                 @BeforeEach
                 void callMethod() {
-                    userAuthService.changePassword(user.getEmail(), newPassword);
+                    userAuthService.changePassword(user.getUsername(), newPassword);
                 }
 
                 @Nested
@@ -340,7 +274,7 @@ class UserAuthServiceTest {
                     @DisplayName("Repository was called and found user")
                     void repositoryCall() {
                         verify(userRepository, times(1))
-                            .findByEmail(any(String.class));
+                            .findByUsername(any(String.class));
                     }
 
                     @Test

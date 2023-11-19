@@ -173,7 +173,7 @@ public class UserAuthService {
         }
     }
 
-    private User changeEnabledAndLockedState(String username){
+    public User changeEnabledAndLockedState(String username){
         try{
             User user = userRepository
                 .findByUsername(username)
