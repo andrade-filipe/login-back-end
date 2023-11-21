@@ -35,7 +35,7 @@ class UserAuthServiceTest {
     @Mock
     UserRepository userRepository;
     @Mock
-    EmailSenderService emailSenderService;
+    EmailSenderService em
     @Mock
     AuthenticationManager authenticationManager;
     @Mock
