@@ -1,7 +1,8 @@
 # login-server [![My Skills](https://skillicons.dev/icons?i=java,spring)](https://skillicons.dev)
 
 <p>Back-end for my login project</p>
-<p>You can find the front-end in:<a>https://github.com/andrade-filipe/login-screen</a></p>
+<p>You can find the front-end in:</p>
+<a href="https://github.com/andrade-filipe/login-screen" target="_blank" >https://github.com/andrade-filipe/login-screen</a>
 
 ## Will be Implemented
 
