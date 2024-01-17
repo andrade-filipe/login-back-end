@@ -2,7 +2,7 @@
 
 <p>Back-end for my login project</p>
 <p>You can find the front-end in:</p>
-<a href="https://github.com/andrade-filipe/login-screen" target="_blank" >https://github.com/andrade-filipe/login-screen</a>
+<a href="https://github.com/andrade-filipe/login-screen" target="_blank">https://github.com/andrade-filipe/login-screen</a>
 
 ## Will be Implemented
 
